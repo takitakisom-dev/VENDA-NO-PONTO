@@ -1,144 +1,236 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>TAKI VENDAS PRO - Código Único</title>
-<meta name="theme-color" content="#174ea6">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>TAKI VENDAS PRO V17 ANDROID - Teclado Touch</title>
+<meta name="theme-color" content="#0f172a">
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f1f5f9}
-.top{background:#174ea6;color:#fff;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
-.hamb{font-size:24px;background:rgba(255,255,255,.15);border:none;color:#fff;width:42px;height:42px;border-radius:10px;cursor:pointer}
-.side{position:fixed;left:-300px;top:0;width:290px;height:100%;background:#fff;z-index:200;transition:.3s;box-shadow:4px 0 20px rgba(0,0,0,.2);overflow:auto}
+*{box-sizing:border-box;font-family:system-ui;-webkit-tap-highlight-color:transparent}body{margin:0;background:#f1f5f9;touch-action:manipulation}
+.top{background:#0f172a;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+.hamb{font-size:22px;background:rgba(255,255,255,.12);border:none;color:#fff;width:40px;height:40px;border-radius:10px}
+.side{position:fixed;left:-310px;top:0;width:300px;height:100%;background:#fff;z-index:200;transition:.25s;box-shadow:4px 0 24px rgba(0,0,0,.3);overflow:auto}
 .side.open{left:0}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150;display:none}
 .overlay.open{display:block}
-.side-header{background:#174ea6;color:#fff;padding:20px}
+.side-header{background:#0f172a;color:#fff;padding:18px}
 .menu-item{padding:14px 20px;display:flex;gap:12px;align-items:center;cursor:pointer;border-bottom:1px solid #f1f5f9;font-weight:700;color:#334155;font-size:14px}
-.menu-item.active{background:#dbeafe;color:#174ea6;border-left:4px solid #174ea6}
-.card{background:#fff;border-radius:16px;padding:14px;margin:10px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.prod{display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:8px 0;background:#fff}
-.add{background:#174ea6;color:#fff;border:none;width:50px;height:50px;border-radius:12px;font-size:28px;font-weight:900;cursor:pointer}
-.final{background:#174ea6;color:#fff;width:100%;padding:16px;border-radius:12px;border:none;font-size:18px;font-weight:900;cursor:pointer}
-.final:disabled{background:#94a3b8}
-input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:4px 0}
+.menu-item.active{background:#dbeafe;color:#0f172a;border-left:4px solid #0f172a}
+.card{background:#fff;border-radius:14px;padding:12px;margin:8px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.prod{display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:6px 0;background:#fff}
+.add{background:#0f172a;color:#fff;border:none;width:48px;height:48px;border-radius:12px;font-size:26px;font-weight:900}
+.final{background:#16a34a;color:#fff;width:100%;padding:16px;border-radius:12px;border:none;font-size:18px;font-weight:900;box-shadow:0 4px 0 #14532d}
+.final:disabled{background:#94a3b8;box-shadow:none}
+.cancel{background:#dc2626;color:#fff;border:none;width:100%;padding:14px;border-radius:12px;font-weight:900;margin-top:8px;box-shadow:0 4px 0 #7f1d1d}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:4px 0;font-size:16px}
 .hidden{display:none!important}
+.label{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;margin-top:8px;display:block}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.offline-bar{padding:8px;text-align:center;font-size:12px;font-weight:800}
+.offline-bar{padding:7px;text-align:center;font-size:11px;font-weight:800}
 .offline-bar.off{background:#fee2e2;color:#b91c1c}
 .offline-bar.on{background:#dcfce7;color:#166534}
 .badge{background:#f59e0b;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;margin-left:6px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:300;padding:14px}
+.modal.open{display:flex}
+.modal-box{background:#fff;width:100%;max-width:420px;border-radius:16px;padding:18px;max-height:90vh;overflow:auto}
+.pdv-layout{display:grid;grid-template-columns:1fr 380px;gap:8px}
+@media(max-width:1024px){.pdv-layout{grid-template-columns:1fr}}
+.teclado-box{background:#0f172a;border-radius:18px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);position:sticky;top:62px;user-select:none}
+.teclado-display{background:#020617;color:#22c55e;border:3px inset #1e293b;border-radius:14px;padding:12px;margin-bottom:12px;text-align:right;font-family:'Courier New',monospace;box-shadow:inset 0 2px 8px rgba(0,0,0,.8)}
+.teclado-display.linha1{font-size:11px;color:#94a3b8;min-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.teclado-display.linha2{font-size:32px;font-weight:900;letter-spacing:2px;min-height:36px;color:#4ade80;text-shadow:0 0 10px #22c55e}
+.teclado-display.linha3{font-size:11px;color:#fbbf24;min-height:14px;display:flex;justify-content:space-between}
+.teclado-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.tecla{background:#1e293b;color:#fff;border:none;border-bottom:5px solid #020617;border-radius:14px;padding:20px 8px;font-size:26px;font-weight:900;cursor:pointer;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.tecla:active{transform:translateY(4px);border-bottom:1px solid #020617;filter:brightness(1.2)}
+.tecla.azul{background:#1d4ed8;border-bottom-color:#1e1b4b}
+.tecla.verde{background:#16a34a;border-bottom-color:#052e16;font-size:20px}
+.tecla.verde-grande{grid-column:span 3;background:#16a34a;border-bottom-color:#052e16;font-size:20px;padding:18px;min-height:64px}
+.tecla.vermelha{background:#dc2626;border-bottom-color:#450a0a}
+.tecla.laranja{background:#f59e0b;border-bottom-color:#78350f;color:#000}
+.tecla.cinza{background:#334155;border-bottom-color:#0f172a}
+.tecla-info{font-size:9px;font-weight:700;opacity:.9;margin-top:3px;letter-spacing:.5px}
+.prod-codigo{background:#0f172a;color:#4ade80;padding:3px 7px;border-radius:6px;font-size:11px;font-weight:900;margin-right:6px;font-family:monospace;border:1px solid #22c55e}
+.btn-quick{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.btn-quick button{background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:8px 4px;font-size:11px;font-weight:800}
 </style>
 </head>
 <body>
-<div id="login" class="card" style="max-width:420px;margin:30px auto;text-align:center">
-<h2>🔥 TAKI VENDAS PRO</h2><p style="color:#174ea6;font-weight:800">Código Único - Completo</p>
-<div style="background:#dbeafe;padding:10px;border-radius:12px;font-size:12px;margin:12px 0;text-align:left;border:1px solid #93c5fd">
-<b>🔑 Senhas:</b><br>
-• Operador CAIXA 01-04: <b>1234</b><br>
-• Master ADMIN: <b>master123</b> ou <b>102030</b>
+<div id="login" class="card" style="max-width:420px;margin:20px auto;text-align:center">
+<h2>🔥 TAKI VENDAS PRO V17 ANDROID</h2><p style="color:#0f172a;font-weight:800;margin:0">Teclado Touch Só Android</p>
+<div style="background:#0f172a;color:#4ade80;padding:14px;border-radius:14px;font-family:monospace;margin:12px 0;text-align:center;border:2px solid #22c55e">
+<div style="color:#94a3b8;font-size:10px;letter-spacing:2px">ANDROID TOUCH</div>
+<div style="font-size:26px;margin:6px 0">7 8 9<br>4 5 6<br>1 2 3<br>0 00 X</div>
+<div style="color:#fbbf24;font-size:10px">TOQUE PARA VENDER</div>
 </div>
 <p id="fbStatus" style="background:#f1f5f9;padding:8px;border-radius:8px;font-size:12px">Conectando...</p>
 <input id="lojaId" value="LOJA-CARAGUA-01" style="font-weight:900;text-align:center">
 <select id="caixaId"><option value="ADMIN">👑 ADMIN CENTRAL</option><option value="CAIXA_01">CAIXA 01</option><option value="CAIXA_02">CAIXA 02</option><option value="CAIXA_03">CAIXA 03</option><option value="CAIXA_04">CAIXA 04</option></select>
-<input id="senhaId" type="password" placeholder="🔑 Senha" style="font-weight:800;text-align:center;margin-top:8px">
+<input id="senhaId" type="password" placeholder="🔑 Senha 1234 / 102030" style="font-weight:700;text-align:center;margin-top:8px">
 <button onclick="entrar()" class="final" style="margin-top:12px">🚀 ENTRAR</button>
-<p style="font-size:11px;color:#64748b;margin-top:8px">Master: master123 / 102030 | Operador: 1234</p>
+<p style="font-size:10px;color:#64748b;margin-top:8px">Master: master123 ou 102030 | Operador: 1234</p>
 </div>
 <div id="app" style="display:none">
-<div class="top"><div style="display:flex;align-items:center;gap:10px"><button class="hamb" onclick="toggleMenu()">☰</button><b>🏪 TAKI VENDAS PRO</b> <span id="tipoUserBadge" style="background:#fff;color:#174ea6;padding:3px 8px;border-radius:10px;font-size:10px;font-weight:800"></span></div><span id="labelCaixa" style="background:rgba(255,255,255,.2);padding:6px 10px;border-radius:20px;font-size:11px"></span></div>
-<div id="connBar" class="offline-bar on">🟢 ONLINE</div>
-<div style="background:#174ea6;color:#fff;padding:8px 14px;display:flex;justify-content:space-between;font-size:12px"><span id="labelLoja">LOJA</span><span>R$ <span id="fatTop">0,00</span> hoje</span></div>
+<div class="top"><div style="display:flex;align-items:center;gap:8px"><button class="hamb" onclick="toggleMenu()">☰</button><b>🏪 TAKI V17 ANDROID</b> <span id="tipoUserBadge" style="background:#4ade80;color:#000;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:900"></span> <span id="caixaStatusBadge" style="background:#f59e0b;color:#000;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:900">FECHADO</span></div><span id="labelCaixa" style="background:rgba(255,255,255,.15);padding:5px 10px;border-radius:20px;font-size:11px"></span></div>
+<div id="connBar" class="offline-bar on">🟢 ONLINE - Android Touch</div>
+<div style="background:#0f172a;color:#fff;padding:6px 14px;display:flex;justify-content:space-between;font-size:11px"><span id="labelLoja">LOJA</span><span style="color:#4ade80">R$ <span id="fatTop">0,00</span> hoje • Touch ⌨️</span></div>
 <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
 <div class="side" id="sideMenu">
-<div class="side-header"><h3 style="margin:0">🔥 TAKI VENDAS PRO</h3><small id="sideLoja"></small><br><small id="sideCaixa"></small><br><small id="sideUserTipo" style="background:#fff;color:#174ea6;padding:3px 8px;border-radius:10px;font-size:11px;font-weight:800;margin-top:6px;display:inline-block"></small><br><small id="sideConn" style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px;margin-top:6px;display:inline-block;font-size:11px">🟢 Online</small></div>
-<div class="menu-item active" onclick="ir('pdv',this)"><span>🛒</span> PDV - Vendas</div>
-<div class="menu-item" onclick="ir('produtos',this)"><span>📦</span> Produtos</div>
+<div class="side-header"><h3 style="margin:0">🔥 TAKI V17 ANDROID</h3><small id="sideLoja"></small><br><small id="sideCaixa"></small><br><small id="sideUserTipo" style="background:#4ade80;color:#000;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:900;margin-top:6px;display:inline-block"></small><br><small id="sideConn" style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px;margin-top:6px;display:inline-block;font-size:11px">🟢 Online</small></div>
+<div class="menu-item active" onclick="ir('pdv',this)"><span>🛒</span> PDV + Teclado Android</div>
+<div class="menu-item" onclick="ir('produtos',this)"><span>📦</span> Produtos + Código</div>
 <div class="menu-item" onclick="ir('estoque',this)"><span>📊</span> Estoque</div>
 <div class="menu-item" onclick="ir('clientes',this)"><span>👥</span> Clientes</div>
 <div class="menu-item" onclick="ir('fornecedores',this)"><span>🚚</span> Fornecedores</div>
-<div class="menu-item" onclick="ir('balanca',this)"><span>⚖️</span> Balança / Peso</div>
-<div class="menu-item" onclick="ir('caixa',this)"><span>💰</span> Caixa / Fechamento</div>
+<div class="menu-item" onclick="ir('balanca',this)"><span>⚖️</span> Balança</div>
+<div class="menu-item" onclick="ir('caixa',this)"><span>💰</span> Abrir / Fechar Caixa</div>
 <div class="menu-item" onclick="ir('relatorios',this)"><span>📈</span> Relatórios</div>
+<div class="menu-item" onclick="ir('cancelados',this)"><span>🗑️</span> Cancelados</div>
 <div class="menu-item" onclick="ir('sync',this)"><span>🔄</span> Fila Offline <span id="filaBadge" class="badge" style="display:none">0</span></div>
 <div class="menu-item" onclick="ir('admin',this)" id="itemAdmin" style="display:none;background:#dcfce7"><span>👑</span> Admin Ao Vivo</div>
-<div style="padding:14px"><button onclick="forcarSync()" style="width:100%;padding:12px;border-radius:10px;background:#174ea6;color:#fff;border:none;font-weight:800;margin-bottom:8px">🔄 Sincronizar</button><button onclick="logout()" style="width:100%;padding:10px;border-radius:10px;background:#ef4444;color:#fff;border:none;font-weight:700;margin-bottom:8px">🚪 Sair</button></div>
+<div style="padding:14px"><button onclick="logout()" style="width:100%;padding:12px;border-radius:10px;background:#ef4444;color:#fff;border:none;font-weight:800">🚪 Sair</button></div>
 </div>
-<div id="aba-pdv" class="aba"><div class="card"><h3>Produtos (<span id="qtdProd">0</span>)</h3><input id="buscaProd" placeholder="🔍 Buscar..." onkeyup="renderProdutos()"><div id="listaProdutos" style="max-height:38vh;overflow:auto"></div></div><div class="card" style="border:2px solid #174ea6"><h3>🛒 Venda <span id="numVenda">0</span> | <select id="clienteVenda" style="width:120px;display:inline-block;padding:6px"><option>Avulso</option></select></h3><div id="carrinho" style="margin:12px 0;min-height:50px;border:1px dashed #cbd5e1;border-radius:10px;padding:10px"></div><h2 style="text-align:right;color:#174ea6">TOTAL R$ <span id="total">0.00</span></h2><select id="pagamento"><option>Dinheiro</option><option>Pix</option><option>Cartão Crédito</option><option>Cartão Débito</option><option>Fiado</option></select><button id="btnFinalizar" class="final" style="margin-top:10px" onclick="finalizar()">✓ FINALIZAR VENDA</button></div></div>
-<div id="aba-produtos" class="aba hidden"><div class="card"><h3>📦 Produtos</h3><input id="pNome" placeholder="Nome"><div class="row"><div><input id="pPreco" type="number" step="0.01" placeholder="Preço"></div><div><input id="pEstoque" type="number" value="100" placeholder="Estoque"></div></div><label style="display:flex;gap:8px;margin:10px 0;font-weight:700;background:#dbeafe;padding:10px;border-radius:10px"><input type="checkbox" id="pPorPeso" style="width:20px"> ⚖️ Por peso Kg</label><button class="final" onclick="salvarProduto()">💾 Salvar</button><div id="listaCadastroProdutos" style="margin-top:12px"></div></div></div>
+<div id="aba-pdv" class="aba">
+<div class="pdv-layout">
+<div>
+<div class="card" style="padding:10px"><div class="btn-quick"><button onclick="quickAdd('101')">101<br>Coxinha</button><button onclick="quickAdd('102')">102<br>Coca</button><button onclick="quickAdd('103')">103<br>Pastel</button><button onclick="quickAdd('201')">201<br>Alcatra</button></div><div style="display:flex;gap:6px"><input id="buscaProd" placeholder="🔍 Buscar nome ou código..." onkeyup="renderProdutos()" style="flex:1"><button onclick="toggleTeclado()" style="padding:10px 14px;border-radius:10px;background:#0f172a;color:#4ade80;border:none;font-weight:800">⌨️</button></div><div id="listaProdutos" style="max-height:26vh;overflow:auto;margin-top:6px"></div></div>
+<div class="card" style="border:2px solid #0f172a;padding:10px"><h3 style="margin:4px 0;display:flex;justify-content:space-between;align-items:center">🛒 Venda <span id="numVenda">0</span> <small id="caixaAbertoInfo" style="font-size:11px;color:#b45309"></small></h3><div id="carrinho" style="margin:10px 0;min-height:56px;border:2px dashed #0f172a;border-radius:12px;padding:8px;background:#f8fafc"></div><h2 style="text-align:right;color:#0f172a;margin:6px 0">TOTAL <span style="color:#16a34a">R$ <span id="total">0.00</span></span></h2><select id="pagamento" style="margin-bottom:6px"><option>💵 Dinheiro</option><option>⚡ Pix</option><option>💳 Cartão Crédito</option><option>💳 Cartão Débito</option><option>🧾 Fiado</option></select><button id="btnFinalizar" class="final" onclick="finalizar()">✓ FINALIZAR VENDA</button><button class="cancel" onclick="cancelarVendaTotal()">🗑️ CANCELAR VENDA</button></div>
+</div>
+<div id="tecladoBox" class="teclado-box">
+<div class="teclado-display">
+<div class="linha1" id="displayLinha1">TOQUE O CÓDIGO - ANDROID</div>
+<div class="linha2" id="displayLinha2">0</div>
+<div class="linha3"><span id="displayLinha3a">QTD: 1</span><span id="displayLinha3b" style="color:#4ade80">PRONTO</span></div>
+</div>
+<div class="teclado-grid">
+<button class="tecla" ontouchstart="tecla('7')" onclick="tecla('7')"><span>7</span></button>
+<button class="tecla" ontouchstart="tecla('8')" onclick="tecla('8')"><span>8</span></button>
+<button class="tecla" ontouchstart="tecla('9')" onclick="tecla('9')"><span>9</span></button>
+<button class="tecla" ontouchstart="tecla('4')" onclick="tecla('4')"><span>4</span></button>
+<button class="tecla" ontouchstart="tecla('5')" onclick="tecla('5')"><span>5</span></button>
+<button class="tecla" ontouchstart="tecla('6')" onclick="tecla('6')"><span>6</span></button>
+<button class="tecla" ontouchstart="tecla('1')" onclick="tecla('1')"><span>1</span></button>
+<button class="tecla" ontouchstart="tecla('2')" onclick="tecla('2')"><span>2</span></button>
+<button class="tecla" ontouchstart="tecla('3')" onclick="tecla('3')"><span>3</span></button>
+<button class="tecla" ontouchstart="tecla('0')" onclick="tecla('0')"><span>0</span></button>
+<button class="tecla cinza" ontouchstart="tecla('00')" onclick="tecla('00')"><span>00</span><span class="tecla-info">DUPLO</span></button>
+<button class="tecla laranja" ontouchstart="tecla('X')" onclick="tecla('X')"><span>X</span><span class="tecla-info">QTD</span></button>
+<button class="tecla vermelha" ontouchstart="tecla('C')" onclick="tecla('C')"><span>C</span><span class="tecla-info">LIMPAR</span></button>
+<button class="tecla azul" ontouchstart="tecla('COD')" onclick="tecla('COD')"><span>COD</span><span class="tecla-info">BUSCAR</span></button>
+<button class="tecla verde" ontouchstart="tecla('ENTER')" onclick="tecla('ENTER')"><span>✔</span><span class="tecla-info">ENTER</span></button>
+</div>
+<button class="tecla verde-grande" style="margin-top:10px" ontouchstart="finalizar()" onclick="finalizar()"><span>💰 FINALIZAR VENDA</span></button>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px">
+<button class="tecla vermelha" style="min-height:60px;padding:12px;font-size:16px" ontouchstart="if(carrinho.length>0){abrirModalCancelItem(carrinho.length-1)}" onclick="if(carrinho.length>0)abrirModalCancelItem(carrinho.length-1)"><span>🗑️ CANCELAR ITEM</span><span class="tecla-info">ÚLTIMO</span></button>
+<button class="tecla azul" style="min-height:60px;padding:12px;font-size:16px" ontouchstart="tecla('C')" onclick="tecla('C')"><span>⌨️ LIMPAR</span><span class="tecla-info">DISPLAY</span></button>
+</div>
+</div>
+</div>
+</div>
+<div id="aba-produtos" class="aba hidden"><div class="card"><h3>📦 Produtos + Código (Android)</h3><div class="row"><div><label class="label">Código numeral *</label><input id="pCodigo" type="number" placeholder="101"></div><div><label class="label">Nome *</label><input id="pNome" placeholder="Coxinha"></div></div><div class="row"><div><label class="label">Preço R$</label><input id="pPreco" type="number" step="0.01" placeholder="5.00"></div><div><label class="label">Estoque</label><input id="pEstoque" type="number" value="100"></div></div><label style="display:flex;gap:8px;margin:10px 0;font-weight:700;background:#dbeafe;padding:10px;border-radius:10px"><input type="checkbox" id="pPorPeso" style="width:20px"> ⚖️ Por peso Kg</label><button class="final" style="background:#0f172a" onclick="salvarProduto()">💾 Salvar Produto</button><div id="listaCadastroProdutos" style="margin-top:12px;max-height:50vh;overflow:auto"></div></div></div>
 <div id="aba-estoque" class="aba hidden"><div class="card"><h3>📊 Estoque</h3><div class="row"><div class="card" style="background:#fef3c7;margin:0;text-align:center"><small>Baixo</small><h2 id="estBaixo">0</h2></div><div class="card" style="background:#dcfce7;margin:0;text-align:center"><small>Total</small><h2 id="estTotal">0</h2></div></div><div id="listaEstoque"></div></div></div>
 <div id="aba-clientes" class="aba hidden"><div class="card"><h3>👥 Clientes</h3><input id="cNome" placeholder="Nome"><input id="cTel" placeholder="Telefone"><button class="final" onclick="salvarCliente()">Salvar</button><div id="listaClientes"></div></div></div>
-<div id="aba-fornecedores" class="aba hidden"><div class="card"><h3>🚚 Fornecedores</h3><input id="fNome" placeholder="Empresa"><input id="fTel" placeholder="Telefone"><button class="final" onclick="salvarFornecedor()">Salvar</button><div id="listaFornecedores"></div></div></div>
-<div id="aba-balanca" class="aba hidden"><div class="card"><h3>⚖️ Balança</h3><h1 id="pesoDisplay" style="font-size:48px;text-align:center;color:#174ea6">0.000</h1><div style="display:flex;gap:6px;justify-content:center"><button onclick="setPeso(0.25)" style="padding:10px;border-radius:8px">0.25</button><button onclick="setPeso(0.5)" style="padding:10px;border-radius:8px">0.5</button><button onclick="setPeso(1)" style="padding:10px;border-radius:8px">1kg</button><button onclick="setPeso(0)" style="padding:10px;background:#fee2e2">Zerar</button></div><input id="pesoManual" type="number" step="0.001" placeholder="0.750" oninput="pesoAtual=this.valueAsNumber||0;document.getElementById('pesoDisplay').innerText=(pesoAtual||0).toFixed(3);calcBalanca()"><select id="produtoBalanca" onchange="calcBalanca()"></select><h2 style="text-align:center;color:#22c55e">R$ <span id="totalBalanca">0.00</span></h2><button class="final" onclick="addBalanca()">➕ Jogar pro PDV</button></div></div>
-<div id="aba-caixa" class="aba hidden"><div class="card"><h3>💰 Caixa - <span id="caixaNome"></span></h3><div id="resumoCaixa"></div><div id="historicoCaixa"></div></div></div>
-<div id="aba-relatorios" class="aba hidden"><div class="card"><h3>📈 Relatórios</h3><h3 id="relFat">R$ 0,00</h3><h3 id="relLucro">R$ 0,00</h3><div id="relPag"></div></div></div>
-<div id="aba-sync" class="aba hidden"><div class="card" style="border:2px solid #f59e0b"><h3>🔄 Fila Offline</h3><div id="filaOffline"></div><button class="final" style="background:#f59e0b;margin-top:10px" onclick="forcarSync()">🔄 Sincronizar Agora</button></div></div>
+<div id="aba-fornecedores" class="aba hidden"><div class="card"><h3>🚚 Fornecedores</h3><input id="fNome" placeholder="Empresa"><button class="final" onclick="salvarFornecedor()">Salvar</button><div id="listaFornecedores"></div></div></div>
+<div id="aba-balanca" class="aba hidden"><div class="card"><h3>⚖️ Balança</h3><h1 id="pesoDisplay" style="font-size:48px;text-align:center;color:#0f172a">0.000</h1><div style="display:flex;gap:6px;justify-content:center"><button onclick="setPeso(0.25)" style="padding:10px;border-radius:8px">0.25</button><button onclick="setPeso(0.5)" style="padding:10px;border-radius:8px">0.5</button><button onclick="setPeso(1)" style="padding:10px;border-radius:8px">1kg</button><button onclick="setPeso(0)" style="padding:10px;background:#fee2e2">Zerar</button></div><input id="pesoManual" type="number" step="0.001" placeholder="0.750" oninput="pesoAtual=this.valueAsNumber||0;document.getElementById('pesoDisplay').innerText=(pesoAtual||0).toFixed(3);calcBalanca()"><select id="produtoBalanca" onchange="calcBalanca()"></select><h2 style="text-align:center;color:#16a34a">R$ <span id="totalBalanca">0.00</span></h2><button class="final" onclick="addBalanca()">➕ Jogar pro PDV</button></div></div>
+<div id="aba-caixa" class="aba hidden"><div class="card" style="border:2px solid #f59e0b"><h3>💰 Abrir / Fechar Caixa - <span id="caixaNome"></span></h3><div id="caixaStatusBox" style="padding:12px;border-radius:12px;margin:10px 0"></div><div class="row"><div><label class="label">Abertura R$</label><input id="valorAbertura" type="number" step="0.01" placeholder="100.00"></div><div><label class="label">Troco R$</label><input id="trocoInicial" type="number" step="0.01" placeholder="0.00"></div></div><button id="btnAbrirCaixa" class="final" style="background:#16a34a;margin-top:8px" onclick="abrirCaixa()">🔓 ABRIR CAIXA</button><button id="btnFecharCaixa" class="final" style="background:#dc2626;margin-top:8px;display:none" onclick="fecharCaixa()">🔒 FECHAR CAIXA</button><div id="resumoCaixa" style="margin-top:12px"></div><div id="historicoCaixa" style="margin-top:10px;max-height:40vh;overflow:auto"></div></div></div>
+<div id="aba-relatorios" class="aba hidden"><div class="card"><h3>📈 Relatórios</h3><div class="row"><div class="card" style="margin:0;background:#dbeafe;text-align:center"><small>Faturamento</small><h3 id="relFat">R$ 0,00</h3></div><div class="card" style="margin:0;background:#dcfce7;text-align:center"><small>Lucro</small><h3 id="relLucro">R$ 0,00</h3></div></div><div class="row" style="margin-top:8px"><div class="card" style="margin:0;background:#fee2e2;text-align:center"><small>Cancelados</small><h3 id="relCancel">R$ 0,00</h3><small id="relCancelQtd">0</small></div><div class="card" style="margin:0;background:#fef3c7;text-align:center"><small>Vendas</small><h3 id="relQtd">0</h3></div></div><div id="relPag" style="margin-top:12px"></div><div id="relProd" style="margin-top:12px"></div></div></div>
+<div id="aba-cancelados" class="aba hidden"><div class="card" style="border:2px solid #dc2626"><h3>🗑️ Cancelados</h3><div id="listaCancelados"></div></div></div>
+<div id="aba-sync" class="aba hidden"><div class="card"><h3>🔄 Fila Offline</h3><div id="filaOffline"></div><button class="final" style="background:#f59e0b;margin-top:10px" onclick="forcarSync()">🔄 Sincronizar</button></div></div>
 <div id="aba-admin" class="aba hidden"><div class="card"><h3>👑 Admin Ao Vivo</h3><h2 id="adminFatTotal">R$ 0,00</h2><div id="adminAoVivo"></div></div></div>
 </div>
+<div id="modalCancel" class="modal"><div class="modal-box"><h3 style="color:#dc2626">🗑️ Cancelar Item</h3><p id="cancelItemNome" style="font-weight:700"></p><label class="label">Motivo</label><select id="motivoCancel"><option>Cliente desistiu</option><option>Produto errado</option><option>Erro digitação</option><option>Sem estoque</option><option>Preço errado</option><option>Outro</option></select><input id="senhaCancel" type="password" placeholder="🔑 Senha master se operador"><div class="row" style="margin-top:12px"><button class="final" style="background:#dc2626" onclick="confirmarCancelItem()">Confirmar</button><button style="width:100%;padding:12px;border-radius:12px;background:#fff;border:1px solid #cbd5e1;margin-top:6px" onclick="fecharModalCancel()">Voltar</button></div></div></div>
 <script>
 const firebaseConfig={apiKey:"AIzaSyCUAnzfTlUeEEN6bXL-rSPWzudobwdEeUI",authDomain:"venda-no-ponto.firebaseapp.com",databaseURL:"https://venda-no-ponto-default-rtdb.firebaseio.com",projectId:"venda-no-ponto",storageBucket:"venda-no-ponto.firebasestorage.app",messagingSenderId:"891438595344",appId:"1:891438595344:web:eac019ede805eb4240f995"};
 firebase.initializeApp(firebaseConfig);const db=firebase.database();
 const SENHAS={"ADMIN":["master123","102030","TAKI2024"],"CAIXA_01":["1234","0000"],"CAIXA_02":["1234","0000"],"CAIXA_03":["1234","0000"],"CAIXA_04":["1234","0000"]};
+const SENHA_MASTER_LIST=["master123","102030","TAKI2024"];
 let LOJA="",CAIXA="",TIPO_USER="operador";
-let produtos=JSON.parse(localStorage.getItem("taki_produtos")||"null")||[{id:"coxinha",nome:"Salgados congelados coxinha",preco:5,estoque:100,cat:"Salgados",porPeso:false},{id:"coca",nome:"Coca-Cola 350ml",preco:5,estoque:50,cat:"Bebidas",porPeso:false}];
+let produtos=JSON.parse(localStorage.getItem("taki_produtos")||"null")||[
+{id:"101",codigo:"101",nome:"Salgados congelados coxinha",preco:5,estoque:100,cat:"Salgados",porPeso:false},
+{id:"102",codigo:"102",nome:"Coca-Cola 350ml",preco:5,estoque:50,cat:"Bebidas",porPeso:false},
+{id:"103",codigo:"103",nome:"Pastel de carne",preco:6,estoque:80,cat:"Salgados",porPeso:false},
+{id:"201",codigo:"201",nome:"Alcatra Kg",preco:45.9,estoque:50,cat:"Açougue",porPeso:true}
+];
 let clientes=JSON.parse(localStorage.getItem("taki_clientes")||"null")||[{nome:"Avulso"}];
 let fornecedores=JSON.parse(localStorage.getItem("taki_fornecedores")||"null")||[];
 let vendasLocais=JSON.parse(localStorage.getItem("taki_vendas")||"[]");
 let filaOffline=JSON.parse(localStorage.getItem("taki_fila")||"[]");
+let cancelados=JSON.parse(localStorage.getItem("taki_cancelados")||"[]");
+let caixaInfo=JSON.parse(localStorage.getItem("taki_caixaInfo")||"null")||{aberto:false,inicial:0,troco:0,aberturaHora:null,caixaId:null};
 let carrinho=[],pesoAtual=0,isOnline=navigator.onLine;
-function saveLocal(){localStorage.setItem("taki_produtos",JSON.stringify(produtos));localStorage.setItem("taki_clientes",JSON.stringify(clientes));localStorage.setItem("taki_fornecedores",JSON.stringify(fornecedores));localStorage.setItem("taki_vendas",JSON.stringify(vendasLocais));localStorage.setItem("taki_fila",JSON.stringify(filaOffline));}
-function updateConn(){isOnline=navigator.onLine;let bar=document.getElementById("connBar");bar.className=isOnline?"offline-bar on":"offline-bar off";bar.innerText=isOnline?"🟢 ONLINE":"🔴 OFFLINE";let sc=document.getElementById("sideConn"); if(sc) sc.innerText=isOnline?"🟢 Online":"🔴 Offline"; if(isOnline&&filaOffline.length>0) forcarSync(); renderFila();}
-window.addEventListener("online",updateConn);window.addEventListener("offline",updateConn);
-function entrar(){
-  LOJA=(document.getElementById("lojaId").value||"LOJA-CARAGUA-01").toUpperCase().trim();
-  CAIXA=document.getElementById("caixaId").value;
-  let senha=document.getElementById("senhaId").value.trim();
-  if(!senha){alert("Digite a senha!\\nMaster: master123 ou 102030\\nOperador: 1234");return}
-  let validas=SENHAS[CAIXA]||["1234"];
-  if(!validas.includes(senha)){alert("❌ Senha errada! Para "+CAIXA+" use ADMIN: master123 ou 102030, CAIXAS: 1234");return}
-  TIPO_USER=(CAIXA==="ADMIN"||senha==="master123"||senha==="102030")?"master":"operador";
-  document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";
-  document.getElementById("labelCaixa").innerText=CAIXA;document.getElementById("labelLoja").innerText=LOJA;
-  document.getElementById("sideLoja").innerText=LOJA;document.getElementById("sideCaixa").innerText=CAIXA;
-  document.getElementById("caixaNome").innerText=CAIXA;
-  document.getElementById("tipoUserBadge").innerText=TIPO_USER==="master"?"🔴 MASTER":"🔵 OPERADOR";
-  document.getElementById("sideUserTipo").innerText=TIPO_USER==="master"?"🔴 MASTER":"🔵 OPERADOR";
-  if(TIPO_USER==="master") document.getElementById("itemAdmin").style.display="flex";
-  renderProdutos();renderCadastroProdutos();atualizarSelectBalanca();renderClientes();renderFornecedores();renderEstoque();updateConn();escutarFirebase();renderRelatorios();
+let idxCancelTemp=null, vendaCancelTemp=false;
+let bufferTeclado="", bufferQtd="1", modoQtd=false;
+function quickAdd(cod){bufferTeclado=cod;bufferQtd="1";tecla('ENTER');}
+function toggleTeclado(){let el=document.getElementById('tecladoBox');el.style.display=el.style.display==='none'?'block':'none';}
+function tecla(v){
+  let disp2=document.getElementById("displayLinha2");
+  let disp1=document.getElementById("displayLinha1");
+  let disp3a=document.getElementById("displayLinha3a");
+  let disp3b=document.getElementById("displayLinha3b");
+  if(v==="C"){bufferTeclado="";bufferQtd="1";modoQtd=false;disp2.innerText="0";disp1.innerText="TOQUE O CÓDIGO - ANDROID";disp3a.innerText="QTD: 1";disp3b.innerText="PRONTO";if(navigator.vibrate)navigator.vibrate(30);return;}
+  if(v==="X"){modoQtd=true;if(bufferTeclado!==""){bufferQtd=bufferTeclado;bufferTeclado="";disp1.innerText=`QTD: ${bufferQtd} x`;disp2.innerText="0";disp3a.innerText=`QTD: ${bufferQtd} | Código`;}else{disp1.innerText="DIGITE A QTD PRIMEIRO";}return;}
+  if(v==="COD"){let cod=bufferTeclado||disp2.innerText;buscarProdutoPorCodigo(cod);return;}
+  if(v==="ENTER"){let cod=bufferTeclado||disp2.innerText;if(cod==="0"||cod===""){return}processarCodigo(cod);bufferTeclado="";bufferQtd="1";modoQtd=false;return;}
+  if(v==="00"){bufferTeclado+="00";}else{bufferTeclado+=v;}
+  if(bufferTeclado.length>6)bufferTeclado=bufferTeclado.slice(-6);
+  disp2.innerText=bufferTeclado;
+  let prod=produtos.find(p=>String(p.codigo)===String(bufferTeclado)||String(p.id)===String(bufferTeclado));
+  if(prod){disp1.innerText=`${prod.nome} - R$ ${Number(prod.preco).toFixed(2)}`;disp3a.innerText=`QTD: ${bufferQtd} | ENTER`;disp3b.innerText="ACHOU ✅";}
+  else{disp1.innerText=`Buscando: ${bufferTeclado}...`;disp3b.innerText="DIGITANDO...";}
 }
+function processarCodigo(cod){
+  let qtd=parseInt(bufferQtd)||1;if(qtd<=0)qtd=1;
+  let prod=produtos.find(p=>String(p.codigo)===String(cod)||String(p.id)===String(cod));
+  if(!prod){document.getElementById("displayLinha1").innerText=`❌ CÓDIGO ${cod} NÃO ACHOU`;document.getElementById("displayLinha2").innerText="ERRO";document.getElementById("displayLinha3b").innerText="NÃO ACHOU ❌";if(navigator.vibrate)navigator.vibrate([80,40,80]);return;}
+  if(!caixaInfo.aberto){alert("🔒 Caixa fechado! Abra em Caixa / Fechamento");return}
+  if(prod.porPeso){document.querySelectorAll(".aba").forEach(a=>a.classList.add("hidden"));document.getElementById("aba-balanca").classList.remove("hidden");let sel=document.getElementById("produtoBalanca");if(sel)sel.value=prod.id;calcBalanca();document.getElementById("displayLinha1").innerText=`⚖️ ${prod.nome} - BALANÇA`;document.getElementById("displayLinha2").innerText=prod.codigo;return;}
+  let ex=carrinho.find(x=>String(x.id)===String(prod.id)&&!x.isPeso);
+  if(ex){ex.qtd+=qtd;}else{carrinho.push({id:String(prod.id),codigo:String(prod.codigo||prod.id),nome:prod.nome,preco:Number(prod.preco),qtd:qtd});}
+  renderCarrinho();
+  document.getElementById("displayLinha1").innerText=`✅ ${prod.nome}`;
+  document.getElementById("displayLinha2").innerText=`${qtd} x ${Number(prod.preco).toFixed(2)} = R$ ${(qtd*prod.preco).toFixed(2)}`;
+  document.getElementById("displayLinha3a").innerText=`TOTAL: R$ ${carrinho.reduce((s,i)=>s+i.preco*i.qtd,0).toFixed(2)}`;
+  document.getElementById("displayLinha3b").innerText="ADICIONADO ✅";
+  if(navigator.vibrate)navigator.vibrate(40);
+  document.getElementById("buscaProd").value="";renderProdutos();
+}
+function buscarProdutoPorCodigo(cod){let prod=produtos.find(p=>String(p.codigo)===String(cod)||String(p.id)===String(cod));if(prod){document.getElementById("displayLinha1").innerText=`🔍 ${prod.nome}`;document.getElementById("displayLinha2").innerText=prod.codigo;document.getElementById("displayLinha3a").innerText=`R$ ${Number(prod.preco).toFixed(2)} | Est: ${prod.estoque}`;document.getElementById("buscaProd").value=prod.nome;renderProdutos();}}
+function saveLocal(){localStorage.setItem("taki_produtos",JSON.stringify(produtos));localStorage.setItem("taki_clientes",JSON.stringify(clientes));localStorage.setItem("taki_fornecedores",JSON.stringify(fornecedores));localStorage.setItem("taki_vendas",JSON.stringify(vendasLocais));localStorage.setItem("taki_fila",JSON.stringify(filaOffline));localStorage.setItem("taki_cancelados",JSON.stringify(cancelados));localStorage.setItem("taki_caixaInfo",JSON.stringify(caixaInfo));}
+function updateConn(){isOnline=navigator.onLine;let bar=document.getElementById("connBar");bar.className=isOnline?"offline-bar on":"offline-bar off";bar.innerText=isOnline?"🟢 ONLINE - Android Touch":"🔴 OFFLINE";let sc=document.getElementById("sideConn");if(sc)sc.innerText=isOnline?"🟢 Online":"🔴 Offline";if(isOnline&&filaOffline.length>0)forcarSync();renderFila();}
+window.addEventListener("online",updateConn);window.addEventListener("offline",updateConn);
+function entrar(){LOJA=(document.getElementById("lojaId").value||"LOJA-CARAGUA-01").toUpperCase().trim();CAIXA=document.getElementById("caixaId").value;let senha=document.getElementById("senhaId").value.trim();if(!senha){alert("Digite senha!");return}let validas=SENHAS[CAIXA]||["1234"];if(!validas.includes(senha)){alert("❌ Senha errada!");return}TIPO_USER=(CAIXA==="ADMIN"||SENHA_MASTER_LIST.includes(senha))?"master":"operador";let saved=JSON.parse(localStorage.getItem("taki_caixaInfo_"+CAIXA+"_"+LOJA)||"null");if(saved)caixaInfo=saved;document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";document.getElementById("labelCaixa").innerText=CAIXA;document.getElementById("labelLoja").innerText=LOJA;document.getElementById("sideLoja").innerText=LOJA;document.getElementById("sideCaixa").innerText=CAIXA;document.getElementById("caixaNome").innerText=CAIXA;document.getElementById("tipoUserBadge").innerText=TIPO_USER==="master"?"🔴 MASTER":"🔵 OPERADOR";document.getElementById("sideUserTipo").innerText=TIPO_USER==="master"?"🔴 MASTER":"🔵 OPERADOR";if(TIPO_USER==="master")document.getElementById("itemAdmin").style.display="flex";renderProdutos();renderCadastroProdutos();atualizarSelectBalanca();renderClientes();renderFornecedores();renderEstoque();renderCaixaStatus();updateConn();escutarFirebase();renderRelatorios();renderCancelados();}
 function logout(){if(confirm("Sair?")){document.getElementById("app").style.display="none";document.getElementById("login").style.display="block";document.getElementById("senhaId").value="";carrinho=[];}}
 function toggleMenu(){document.getElementById("sideMenu").classList.toggle("open");document.getElementById("overlay").classList.toggle("open");}
-function ir(nome,el){
-  if(TIPO_USER!=="master"){
-    let bloq=["estoque","relatorios","admin","sync"];
-    if(bloq.includes(nome)){alert("🔒 Só MASTER! Use ADMIN com senha master123 ou 102030");return;}
-  }
-  document.querySelectorAll(".aba").forEach(a=>a.classList.add("hidden"));
-  document.getElementById("aba-"+nome).classList.remove("hidden");
-  document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));
-  el.classList.add("active");toggleMenu();
-}
-function renderProdutos(){let busca=(document.getElementById("buscaProd")?.value||"").toLowerCase();let div=document.getElementById("listaProdutos");let lista=produtos.filter(p=>p.nome.toLowerCase().includes(busca));document.getElementById("qtdProd").innerText=produtos.length;div.innerHTML=lista.map(p=>`<div class="prod"><div style="flex:1"><b>${p.nome}</b> <small>(${p.estoque})</small><br><b style="color:#174ea6">R$ ${Number(p.preco).toFixed(2)}</b></div><button class="add" onclick="addCarrinho('${p.id}')">+</button></div>`).join("");}
-function addCarrinho(id){let p=produtos.find(x=>String(x.id)===String(id));if(!p)return;if(p.porPeso){ir('balanca',document.querySelectorAll('.menu-item')[5]);document.getElementById("produtoBalanca").value=id;calcBalanca();return}let ex=carrinho.find(x=>String(x.id)===String(p.id)&&!x.isPeso);if(ex){ex.qtd++;}else{carrinho.push({id:String(p.id),nome:p.nome,preco:Number(p.preco),qtd:1});}renderCarrinho();if(navigator.vibrate)navigator.vibrate(50);}
-function renderCarrinho(){let div=document.getElementById("carrinho");let btn=document.getElementById("btnFinalizar");if(carrinho.length===0){div.innerHTML="<div style='text-align:center;color:#94a3b8;padding:10px'>Carrinho vazio<br><small>Clique no + azul</small></div>";btn.disabled=true;document.getElementById("total").innerText="0.00";document.getElementById("numVenda").innerText="0";return}div.innerHTML=carrinho.map((it,idx)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #eee"><div><b>${it.nome}</b><br><small>R$ ${it.preco.toFixed(2)} x ${it.qtd}</small></div><div style="display:flex;gap:8px;align-items:center"><b>R$ ${(it.preco*it.qtd).toFixed(2)}</b><button onclick="remCarrinho(${idx})" style="background:#fee2e2;border:none;border-radius:8px;padding:8px 12px">🗑️</button></div></div>`).join("");let tot=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);document.getElementById("total").innerText=tot.toFixed(2);document.getElementById("numVenda").innerText=carrinho.reduce((s,i)=>s+i.qtd,0);btn.disabled=false;}
-function remCarrinho(idx){carrinho.splice(idx,1);renderCarrinho();}
-function finalizar(){if(carrinho.length===0){alert("Carrinho vazio!");return}let total=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);let btn=document.getElementById("btnFinalizar");btn.disabled=true;btn.innerText="⏳ Salvando...";let venda={caixaId:CAIXA,lojaId:LOJA,tipoUser:TIPO_USER,total:total,produtos:JSON.parse(JSON.stringify(carrinho)),pagamento:document.getElementById("pagamento").value,cliente:document.getElementById("clienteVenda").value||"Avulso",data:new Date().toISOString(),hora:new Date().toLocaleTimeString("pt-BR"),timestamp:Date.now(),idLocal:Date.now().toString()};vendasLocais.unshift(venda);saveLocal();if(isOnline){db.ref(`lojas/${LOJA}/vendas`).push(venda).then(()=>{alert("✅ Venda R$ "+total.toFixed(2));carrinho=[];renderCarrinho();renderRelatorios();btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";}).catch(()=>{filaOffline.push(venda);saveLocal();renderFila();alert("✅ Salvo offline");carrinho=[];renderCarrinho();btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";});}else{filaOffline.push(venda);saveLocal();renderFila();alert("📴 Salvo offline");carrinho=[];renderCarrinho();btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";}}
-function salvarProduto(){if(TIPO_USER!=="master"){alert("Só MASTER");return}let nome=document.getElementById("pNome").value.trim();let preco=parseFloat(document.getElementById("pPreco").value)||0;let estoque=parseInt(document.getElementById("pEstoque").value)||0;if(!nome||preco<=0)return;let prod={id:Date.now().toString(),nome,preco,estoque,porPeso:document.getElementById("pPorPeso").checked};produtos.unshift(prod);saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/produtos/${prod.id}`).set(prod);renderProdutos();renderCadastroProdutos();}
-function renderCadastroProdutos(){document.getElementById("listaCadastroProdutos").innerHTML=produtos.map(p=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee"><span><b>${p.nome}</b> R$ ${Number(p.preco).toFixed(2)} (${p.estoque})</span><button onclick="delProd('${p.id}')" style="background:#fee2e2;border:none;border-radius:6px">🗑️</button></div>`).join("");}
-function delProd(id){if(TIPO_USER!=="master"){alert("Só MASTER");return}produtos=produtos.filter(p=>String(p.id)!==String(id));saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/produtos/${id}`).remove();renderProdutos();renderCadastroProdutos();}
-function renderEstoque(){document.getElementById("estTotal").innerText=produtos.reduce((s,p)=>s+(Number(p.estoque)||0),0);document.getElementById("estBaixo").innerText=produtos.filter(p=>(Number(p.estoque)||0)<=5).length;let div=document.getElementById("listaEstoque");if(div)div.innerHTML=produtos.map(p=>`<div class="prod"><div><b>${p.nome}</b><br><small>Est: ${p.estoque}</small></div><b>${p.estoque}</b></div>`).join("");}
+function ir(nome,el){document.querySelectorAll(".aba").forEach(a=>a.classList.add("hidden"));document.getElementById("aba-"+nome).classList.remove("hidden");document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));el.classList.add("active");toggleMenu();if(nome==="caixa")renderCaixaStatus();if(nome==="cancelados")renderCancelados();}
+function renderCaixaStatus(){let box=document.getElementById("caixaStatusBox");let badge=document.getElementById("caixaStatusBadge");let btnAbrir=document.getElementById("btnAbrirCaixa");let btnFechar=document.getElementById("btnFecharCaixa");let info=document.getElementById("caixaAbertoInfo");if(caixaInfo.aberto){if(box){box.style.background="#dcfce7";box.style.border="1px solid #86efac";box.innerHTML=`<b style="color:#166534">✅ CAIXA ABERTO</b><br>Aberto: ${caixaInfo.aberturaHora||"-"}<br>Inicial: R$ ${Number(caixaInfo.inicial||0).toFixed(2)}`;}if(badge){badge.innerText="ABERTO";badge.style.background="#16a34a";}if(info)info.innerText="✅ Aberto";if(btnAbrir)btnAbrir.style.display="none";if(btnFechar)btnFechar.style.display="block";}else{if(box){box.style.background="#fee2e2";box.style.border="1px solid #fecaca";box.innerHTML=`<b style="color:#b91c1c">🔒 CAIXA FECHADO</b><br>Abra para vender`;}if(badge){badge.innerText="FECHADO";badge.style.background="#dc2626";}if(info)info.innerText="🔒 FECHADO";if(btnAbrir)btnAbrir.style.display="block";if(btnFechar)btnFechar.style.display="none";}renderResumoCaixa();}
+function abrirCaixa(){let inicial=parseFloat(document.getElementById("valorAbertura").value)||0;let troco=parseFloat(document.getElementById("trocoInicial").value)||0;caixaInfo={aberto:true,inicial:inicial,troco:troco,aberturaHora:new Date().toLocaleString("pt-BR"),caixaId:CAIXA,lojaId:LOJA,timestamp:Date.now()};localStorage.setItem("taki_caixaInfo_"+CAIXA+"_"+LOJA,JSON.stringify(caixaInfo));saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/caixas/${CAIXA}/abertura`).push(caixaInfo);alert("✅ Caixa aberto R$ "+(inicial+troco).toFixed(2));renderCaixaStatus();}
+function fecharCaixa(){if(!caixaInfo.aberto){alert("Fechado");return}if(TIPO_USER!=="master"){alert("Só MASTER");return}let hoje=vendasLocais.filter(v=>String(v.caixaId)===String(CAIXA)&& new Date(v.data).toDateString()===new Date().toDateString());let fat=hoje.reduce((s,v)=>s+(Number(v.total)||0),0);let totalFinal=Number(caixaInfo.inicial||0)+Number(caixaInfo.troco||0)+fat;if(!confirm(`Fechar caixa? Total: R$ ${totalFinal.toFixed(2)}`))return;caixaInfo.fechamentoHora=new Date().toLocaleString("pt-BR");caixaInfo.aberto=false;localStorage.setItem("taki_caixaInfo_"+CAIXA+"_"+LOJA,JSON.stringify(caixaInfo));saveLocal();alert("🔒 Fechado R$ "+totalFinal.toFixed(2));renderCaixaStatus();}
+function renderResumoCaixa(){let hoje=vendasLocais.filter(v=>String(v.caixaId)===String(CAIXA)&& new Date(v.data).toDateString()===new Date().toDateString());let fat=hoje.reduce((s,v)=>s+(Number(v.total)||0),0);document.getElementById("resumoCaixa").innerHTML=`<div class="row"><div class="card" style="margin:0;text-align:center;background:#dbeafe"><small>Vendas</small><h3>${hoje.length}</h3></div><div class="card" style="margin:0;text-align:center;background:#dcfce7"><small>Faturamento</small><h3>R$ ${fat.toFixed(2)}</h3></div></div>`;document.getElementById("historicoCaixa").innerHTML=hoje.slice(0,50).map(v=>`<div style="padding:8px 0;border-bottom:1px solid #eee;font-size:12px"><b>${v.hora||""}</b> - ${(v.produtos||[]).map(p=>p.nome).join(", ")} - R$ ${Number(v.total||0).toFixed(2)}</div>`).join("")||"Sem vendas";}
+function renderProdutos(){let busca=(document.getElementById("buscaProd")?.value||"").toLowerCase();let div=document.getElementById("listaProdutos");let lista=produtos.filter(p=>p.nome.toLowerCase().includes(busca)||String(p.codigo).includes(busca)||String(p.id).includes(busca));document.getElementById("qtdProd").innerText=produtos.length;div.innerHTML=lista.map(p=>`<div class="prod"><div style="flex:1"><span class="prod-codigo">${p.codigo||p.id}</span><b>${p.nome}</b> ${p.porPeso?"⚖️":""} <small>(${p.estoque})</small><br><b style="color:#0f172a">R$ ${Number(p.preco).toFixed(2)}${p.porPeso?"/kg":""}</b></div><button class="add" onclick="addCarrinho('${p.id}')">+</button></div>`).join("")||"<div style='padding:12px;text-align:center;color:#94a3b8'>Nenhum produto</div>";}
+function addCarrinho(id){if(!caixaInfo.aberto){alert("🔒 Caixa fechado!");return}let p=produtos.find(x=>String(x.id)===String(id)||String(x.codigo)===String(id));if(!p)return;if(p.porPeso){document.querySelectorAll(".aba").forEach(a=>a.classList.add("hidden"));document.getElementById("aba-balanca").classList.remove("hidden");let sel=document.getElementById("produtoBalanca");if(sel)sel.value=p.id;calcBalanca();return}let ex=carrinho.find(x=>String(x.id)===String(p.id)&&!x.isPeso);if(ex){ex.qtd++;}else{carrinho.push({id:String(p.id),codigo:String(p.codigo||p.id),nome:p.nome,preco:Number(p.preco),qtd:1});}renderCarrinho();if(navigator.vibrate)navigator.vibrate(40);}
+function renderCarrinho(){let div=document.getElementById("carrinho");let btn=document.getElementById("btnFinalizar");if(carrinho.length===0){div.innerHTML="<div style='text-align:center;color:#94a3b8;padding:10px'>Carrinho vazio<br><small>Use teclado: 101 + ENTER</small></div>";btn.disabled=true;document.getElementById("total").innerText="0.00";document.getElementById("numVenda").innerText="0";return}div.innerHTML=carrinho.map((it,idx)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e2e8f0"><div><span class="prod-codigo">${it.codigo||""}</span><b>${it.nome}</b><br><small>R$ ${it.preco.toFixed(2)} x ${it.qtd} = <b style="color:#16a34a">R$ ${(it.preco*it.qtd).toFixed(2)}</b></small></div><div><button onclick="abrirModalCancelItem(${idx})" style="background:#fee2e2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:10px 14px;font-weight:800">🗑️</button></div></div>`).join("");let tot=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);document.getElementById("total").innerText=tot.toFixed(2);document.getElementById("numVenda").innerText=carrinho.reduce((s,i)=>s+i.qtd,0);btn.disabled=false;}
+function abrirModalCancelItem(idx){idxCancelTemp=idx;vendaCancelTemp=false;let it=carrinho[idx];document.getElementById("cancelItemNome").innerText=it.nome+" - R$ "+(it.preco*it.qtd).toFixed(2);document.getElementById("modalCancel").classList.add("open");}
+function fecharModalCancel(){document.getElementById("modalCancel").classList.remove("open");idxCancelTemp=null;vendaCancelTemp=false;}
+function confirmarCancelItem(){if(idxCancelTemp===null&&!vendaCancelTemp){fecharModalCancel();return}let motivo=document.getElementById("motivoCancel").value;if(TIPO_USER!=="master"){let senha=document.getElementById("senhaCancel").value.trim();if(!SENHA_MASTER_LIST.includes(senha)){alert("❌ Precisa senha MASTER");return}}if(vendaCancelTemp){carrinho.forEach(it=>{cancelados.unshift({id:Date.now().toString()+Math.random(),tipo:"VENDA TOTAL",produto:it.nome,qtd:it.qtd,valor:it.preco*it.qtd,motivo:motivo,caixaId:CAIXA,tipoUser:TIPO_USER,data:new Date().toISOString(),hora:new Date().toLocaleString("pt-BR"),timestamp:Date.now()});});carrinho=[];}else{let it=carrinho[idxCancelTemp];cancelados.unshift({id:Date.now().toString(),tipo:"ITEM",produto:it.nome,qtd:it.qtd,valor:it.preco*it.qtd,motivo:motivo,caixaId:CAIXA,tipoUser:TIPO_USER,data:new Date().toISOString(),hora:new Date().toLocaleString("pt-BR"),timestamp:Date.now()});carrinho.splice(idxCancelTemp,1);}saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/cancelados`).push(cancelados[0]);renderCarrinho();renderCancelados();renderRelatorios();fecharModalCancel();}
+function cancelarVendaTotal(){if(carrinho.length===0){alert("Carrinho vazio");return}vendaCancelTemp=true;idxCancelTemp=null;document.getElementById("cancelItemNome").innerText="CANCELAR VENDA TOTAL R$ "+carrinho.reduce((s,i)=>s+i.preco*i.qtd,0).toFixed(2);document.getElementById("modalCancel").classList.add("open");}
+function finalizar(){if(!caixaInfo.aberto){alert("🔒 Caixa fechado!");return}if(carrinho.length===0){alert("Carrinho vazio!");return}let total=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);let btn=document.getElementById("btnFinalizar");btn.disabled=true;btn.innerText="⏳ Salvando...";let venda={caixaId:CAIXA,lojaId:LOJA,tipoUser:TIPO_USER,total:total,produtos:JSON.parse(JSON.stringify(carrinho)),pagamento:document.getElementById("pagamento").value,cliente:document.getElementById("clienteVenda").value||"Avulso",data:new Date().toISOString(),hora:new Date().toLocaleTimeString("pt-BR"),timestamp:Date.now(),idLocal:Date.now().toString()};vendasLocais.unshift(venda);saveLocal();if(isOnline){db.ref(`lojas/${LOJA}/vendas`).push(venda).then(()=>{alert("✅ Venda R$ "+total.toFixed(2));carrinho=[];renderCarrinho();renderRelatorios();renderCaixaStatus();btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";tecla('C');}).catch(()=>{filaOffline.push(venda);saveLocal();renderFila();alert("✅ Salvo offline");carrinho=[];renderCarrinho();btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";});}else{filaOffline.push(venda);saveLocal();renderFila();alert("📴 Salvo offline");carrinho=[];renderCarrinho();btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";}}
+function salvarProduto(){if(TIPO_USER!=="master"){alert("Só MASTER");return}let codigo=document.getElementById("pCodigo").value.trim()||Date.now().toString().slice(-3);let nome=document.getElementById("pNome").value.trim();let preco=parseFloat(document.getElementById("pPreco").value)||0;let estoque=parseInt(document.getElementById("pEstoque").value)||0;if(!nome||preco<=0){alert("Nome e preço");return}let prod={id:codigo,codigo:codigo,nome,preco,estoque,porPeso:document.getElementById("pPorPeso").checked};produtos=produtos.filter(p=>String(p.codigo)!==String(codigo)&&String(p.id)!==String(codigo));produtos.unshift(prod);saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/produtos/${prod.id}`).set(prod);document.getElementById("pCodigo").value="";document.getElementById("pNome").value="";document.getElementById("pPreco").value="";renderProdutos();renderCadastroProdutos();renderEstoque();atualizarSelectBalanca();}
+function renderCadastroProdutos(){document.getElementById("listaCadastroProdutos").innerHTML=produtos.map(p=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;align-items:center"><div><span class="prod-codigo">${p.codigo||p.id}</span><b>${p.nome}</b> ${p.porPeso?"⚖️":""}<br><small>R$ ${Number(p.preco).toFixed(2)} | Est: ${p.estoque}</small></div><button onclick="delProd('${p.id}')" style="background:#fee2e2;border:none;border-radius:8px;padding:6px 10px">🗑️</button></div>`).join("")||"<small>Nenhum</small>";}
+function delProd(id){if(TIPO_USER!=="master"){alert("Só MASTER");return}produtos=produtos.filter(p=>String(p.id)!==String(id)&&String(p.codigo)!==String(id));saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/produtos/${id}`).remove();renderProdutos();renderCadastroProdutos();renderEstoque();}
+function renderEstoque(){document.getElementById("estTotal").innerText=produtos.reduce((s,p)=>s+(Number(p.estoque)||0),0);document.getElementById("estBaixo").innerText=produtos.filter(p=>(Number(p.estoque)||0)<=5).length;let div=document.getElementById("listaEstoque");if(div)div.innerHTML=produtos.map(p=>`<div class="prod"><div><span class="prod-codigo">${p.codigo||p.id}</span><b>${p.nome}</b><br><small>Est: ${p.estoque}</small></div><b style="color:${Number(p.estoque)<=5?"#dc2626":"#16a34a"}">${p.estoque}</b></div>`).join("");}
 function salvarCliente(){let nome=document.getElementById("cNome").value.trim();if(!nome)return;let c={id:Date.now().toString(),nome,tel:document.getElementById("cTel").value};clientes.push(c);saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/clientes/${c.id}`).set(c);renderClientes();}
-function renderClientes(){let div=document.getElementById("listaClientes");if(div)div.innerHTML=clientes.slice(1).map(c=>`<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${c.nome}</b></div>`).join("")||"<small>Nenhum</small>";let sel=document.getElementById("clienteVenda");if(sel)sel.innerHTML=clientes.map(c=>`<option>${c.nome}</option>`).join("");}
-function salvarFornecedor(){let nome=document.getElementById("fNome").value.trim();if(!nome)return;let f={id:Date.now().toString(),nome,tel:document.getElementById("fTel").value};fornecedores.push(f);saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/fornecedores/${f.id}`).set(f);renderFornecedores();}
-function renderFornecedores(){let div=document.getElementById("listaFornecedores");if(div)div.innerHTML=fornecedores.map(f=>`<div style="padding:8px 0"><b>${f.nome}</b></div>`).join("")||"<small>Nenhum</small>";}
+function renderClientes(){let div=document.getElementById("listaClientes");if(div)div.innerHTML=clientes.slice(1).map(c=>`<div style="padding:10px 0;border-bottom:1px solid #eee"><b>${c.nome}</b></div>`).join("")||"<small>Nenhum</small>";let sel=document.getElementById("clienteVenda");if(sel)sel.innerHTML=clientes.map(c=>`<option>${c.nome}</option>`).join("");}
+function salvarFornecedor(){let nome=document.getElementById("fNome").value.trim();if(!nome)return;let f={id:Date.now().toString(),nome};fornecedores.push(f);saveLocal();if(isOnline)db.ref(`lojas/${LOJA}/fornecedores/${f.id}`).set(f);renderFornecedores();}
+function renderFornecedores(){let div=document.getElementById("listaFornecedores");if(div)div.innerHTML=fornecedores.map(f=>`<div style="padding:10px 0"><b>${f.nome}</b></div>`).join("")||"<small>Nenhum</small>";}
 function setPeso(v){pesoAtual=Number(v)||0;document.getElementById("pesoDisplay").innerText=pesoAtual.toFixed(3);document.getElementById("pesoManual").value=pesoAtual;calcBalanca();}
-function calcBalanca(){let sel=document.getElementById("produtoBalanca");if(!sel||!sel.value)return;let prod=produtos.find(p=>String(p.id)===String(sel.value));if(!prod)return;document.getElementById("totalBalanca").innerText=(pesoAtual*prod.preco).toFixed(2);}
-function addBalanca(){let sel=document.getElementById("produtoBalanca");let prod=produtos.find(p=>String(p.id)===String(sel.value));if(!prod||pesoAtual<=0)return;carrinho.push({id:prod.id+"-"+Date.now(),nome:prod.nome+" ("+pesoAtual.toFixed(3)+"kg)",preco:prod.preco*pesoAtual,qtd:1});renderCarrinho();ir('pdv',document.querySelectorAll('.menu-item')[0]);setPeso(0);}
-function atualizarSelectBalanca(){let sel=document.getElementById("produtoBalanca");if(!sel)return;let lista=produtos.filter(p=>p.porPeso);if(lista.length===0)lista=produtos;sel.innerHTML=lista.map(p=>`<option value="${p.id}">${p.nome} - R$ ${Number(p.preco).toFixed(2)}</option>`).join("");}
+function calcBalanca(){let sel=document.getElementById("produtoBalanca");if(!sel||!sel.value)return;let prod=produtos.find(p=>String(p.id)===String(sel.value)||String(p.codigo)===String(sel.value));if(!prod)return;document.getElementById("totalBalanca").innerText=(pesoAtual*prod.preco).toFixed(2);}
+function addBalanca(){let sel=document.getElementById("produtoBalanca");let prod=produtos.find(p=>String(p.id)===String(sel.value)||String(p.codigo)===String(sel.value));if(!prod||pesoAtual<=0)return;carrinho.push({id:prod.id,codigo:prod.codigo||prod.id,nome:prod.nome+" ("+pesoAtual.toFixed(3)+"kg)",preco:prod.preco*pesoAtual,qtd:1});renderCarrinho();ir('pdv',document.querySelectorAll('.menu-item')[0]);setPeso(0);}
+function atualizarSelectBalanca(){let sel=document.getElementById("produtoBalanca");if(!sel)return;let lista=produtos.filter(p=>p.porPeso);if(lista.length===0)lista=produtos;sel.innerHTML=lista.map(p=>`<option value="${p.id}">${p.codigo||p.id} - ${p.nome} - R$ ${Number(p.preco).toFixed(2)}</option>`).join("");}
 function renderFila(){let div=document.getElementById("filaOffline");let badge=document.getElementById("filaBadge");if(filaOffline.length===0){div.innerHTML="<div style='padding:20px;text-align:center;color:#94a3b8'>✅ Tudo sincronizado!</div>";if(badge)badge.style.display="none";}else{if(badge){badge.style.display="inline-block";badge.innerText=filaOffline.length}div.innerHTML=filaOffline.map(v=>`<div style="padding:10px;background:#fffbeb;margin:6px 0;border-radius:10px;border-left:4px solid #f59e0b"><b>${v.caixaId}</b> - R$ ${Number(v.total).toFixed(2)} às ${v.hora}</div>`).join("");}}
 function forcarSync(){if(!isOnline){alert("Sem internet!");return}if(filaOffline.length===0){alert("Tudo sincronizado ✅");return}Promise.all(filaOffline.map(v=>db.ref(`lojas/${LOJA}/vendas`).push(v))).then(()=>{filaOffline=[];saveLocal();renderFila();alert("✅ Sincronizado!");});}
-function renderRelatorios(){let hoje=vendasLocais.filter(v=>{try{return new Date(v.data).toDateString()===new Date().toDateString()}catch(e){return false}});let fat=hoje.reduce((s,v)=>s+(Number(v.total)||0),0);document.getElementById("fatTop").innerText=fat.toFixed(2);document.getElementById("relFat").innerText="R$ "+fat.toFixed(2);document.getElementById("relLucro").innerText="R$ "+fat.toFixed(2);document.getElementById("adminFatTotal").innerText="R$ "+fat.toFixed(2);}
+function renderCancelados(){let div=document.getElementById("listaCancelados");if(cancelados.length===0){div.innerHTML="<div style='padding:20px;text-align:center;color:#94a3b8'>✅ Nenhum cancelamento</div>";return}div.innerHTML=cancelados.map(c=>`<div style="padding:10px;background:#fff1f2;margin:6px 0;border-radius:10px;border-left:4px solid #dc2626"><b style="color:#b91c1c">${c.tipo||"ITEM"} - ${c.produto}</b><br><small>Qtd: ${c.qtd} | R$ ${Number(c.valor||0).toFixed(2)} | Motivo: <b>${c.motivo}</b></small><br><small>${c.hora||""} | ${c.caixaId}</small></div>`).join("");}
+function renderRelatorios(){let hoje=vendasLocais.filter(v=>{try{return new Date(v.data).toDateString()===new Date().toDateString()}catch(e){return false}});let fat=hoje.reduce((s,v)=>s+(Number(v.total)||0),0);let hojeCancel=cancelados.filter(c=>{try{return new Date(c.data).toDateString()===new Date().toDateString()}catch(e){return false}});let totCancel=hojeCancel.reduce((s,c)=>s+(Number(c.valor)||0),0);document.getElementById("fatTop").innerText=fat.toFixed(2);document.getElementById("relFat").innerText="R$ "+fat.toFixed(2);document.getElementById("relCancel").innerText="R$ "+totCancel.toFixed(2);document.getElementById("relCancelQtd").innerText=hojeCancel.length+" itens";document.getElementById("relQtd").innerText=hoje.length+" vendas";document.getElementById("adminFatTotal").innerText="R$ "+fat.toFixed(2);}
 function escutarFirebase(){db.ref(`lojas/${LOJA}/produtos`).on("value",snap=>{if(!snap.exists())return;let lista=[];snap.forEach(c=>lista.push(c.val()));if(lista.length>0){produtos=lista;saveLocal();renderProdutos();}});db.ref(`lojas/${LOJA}/vendas`).limitToLast(100).on("value",snap=>{let fb=[];snap.forEach(c=>{let v=c.val();if(v&&v.total)fb.push(v)});fb.forEach(vfb=>{if(!vendasLocais.find(v=>v.idLocal&&vfb.idLocal&&v.idLocal===vfb.idLocal)){vendasLocais.push(vfb);}});saveLocal();renderRelatorios();});}
 </script>
 </body>
