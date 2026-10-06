@@ -2,142 +2,84 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Venda no Ponto PRO 15.0 MULTI</title>
+<title>Venda no Ponto PRO 15.0 COMPLETO</title>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f1f5f9;padding:8px}
-.top{background:#174ea6;color:#fff;border-radius:16px;padding:12px}
-.btn{border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;background:#fff;color:#174ea6;margin-right:6px}
-.tab{padding:10px 18px;border-radius:20px;border:1px solid #cbd5e1;background:#fff;font-weight:700;margin-right:6px}
+*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f1f5f9;padding:8px;padding-bottom:80px}
+.top{background:#174ea6;color:#fff;border-radius:16px;padding:12px;position:sticky;top:8px;z-index:10}
+.btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;background:#fff;color:#174ea6;margin:2px}
+.tab{padding:8px 14px;border-radius:20px;border:1px solid #cbd5e1;background:#fff;font-weight:700;margin:3px;font-size:13px;cursor:pointer;white-space:nowrap}
 .tab.active{background:#174ea6;color:#fff}
 .card{background:#fff;border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
 .prod{display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;border-radius:12px;padding:10px;margin:8px 0}
 .add{background:#174ea6;color:#fff;border:none;width:40px;height:40px;border-radius:10px;font-size:20px}
 .final{background:#174ea6;color:#fff;width:100%;padding:14px;border-radius:12px;border:none;font-size:18px;font-weight:800}
-.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:900;background:#22c55e}
-.live{animation:pulse 1s infinite}@keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
 input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:4px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.menu-scroll{display:flex;overflow-x:auto;padding:6px 0;gap:2px}
+.hidden{display:none!important}
+.label{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;margin-top:8px;display:block}
 </style>
 </head>
 <body>
-
-<div id="login" class="card" style="max-width:420px;margin:40px auto;text-align:center">
-<h2>🔥 Venda no Ponto PRO 15.0</h2>
-<p id="fbStatus">Conectando Firebase...</p>
+<div id="login" class="card" style="max-width:420px;margin:30px auto;text-align:center">
+<h2>🔥 Venda no Ponto PRO 15.0</h2><p style="color:#64748b">COMPLETO + MULTI-CAIXA</p>
+<p id="fbStatus" style="background:#f1f5f9;padding:8px;border-radius:8px;font-size:12px">Conectando...</p>
 <input id="lojaId" value="LOJA-CARAGUA-01" style="font-weight:900;text-align:center">
 <select id="caixaId"><option value="ADMIN">👑 ADMIN CENTRAL</option><option value="CAIXA_01">CAIXA 01</option><option value="CAIXA_02">CAIXA 02</option><option value="CAIXA_03">CAIXA 03</option><option value="CAIXA_04">CAIXA 04</option></select>
-<button onclick="entrar()" class="final" style="margin-top:10px">ENTRAR AO VIVO</button>
+<button onclick="entrar()" class="final" style="margin-top:10px">🚀 ENTRAR AO VIVO</button>
 </div>
-
 <div id="app" style="display:none">
 <div class="top">
-<div style="display:flex;justify-content:space-between;align-items:center">
-<b>🏪 Venda no Ponto PRO</b><span style="background:#ffffff33;padding:4px 10px;border-radius:20px;font-size:12px"><span class="live">●</span> <span id="labelCaixa">CAIXA 01</span> - AO VIVO</span>
+<div style="display:flex;justify-content:space-between;align-items:center"><b>🏪 Venda no Ponto PRO</b><span style="background:#ffffff33;padding:5px 10px;border-radius:20px;font-size:11px">● <span id="labelCaixa">CAIXA</span> AO VIVO</span></div>
+<div style="margin-top:8px"><button class="btn">Abrir Caixa</button><button class="btn">Fechar</button><button class="btn" onclick="location.reload()">Sair</button> <span id="adminFat" style="display:none;margin-left:8px;background:#0f172a;padding:6px 10px;border-radius:10px;font-size:12px">👑 R$ <span id="fat">0,00</span> hoje</span></div>
+<div style="margin-top:6px;font-size:11px;opacity:.8">Loja: <span id="labelLoja"></span> | <span id="sincInfo"></span></div>
 </div>
-<div style="margin-top:8px"><button class="btn">Abrir Caixa</button><button class="btn">Fechar</button><button onclick="location.reload()" class="btn">Sair</button></div>
-<div id="adminBar" style="display:none;margin-top:10px;background:#0f172a;padding:10px;border-radius:10px">👑 ADMIN: <b id="fat">R$ 0,00</b> hoje - <span id="qtdVendas">0 vendas</span> - Loja: <span id="labelLoja"></span></div>
+<div class="menu-scroll">
+<button class="tab active" onclick="aba('pdv',this)">🛒 PDV</button>
+<button class="tab" onclick="aba('produtos',this)">📦 Produtos</button>
+<button class="tab" onclick="aba('estoque',this)">📊 Estoque</button>
+<button class="tab" onclick="aba('clientes',this)">👥 Clientes</button>
+<button class="tab" onclick="aba('fornecedores',this)">🚚 Fornecedores</button>
+<button class="tab" onclick="aba('caixa',this)">💰 Caixa</button>
+<button class="tab" onclick="aba('relatorios',this)">📈 Relatórios</button>
+<button class="tab" onclick="aba('admin',this)" id="tabAdmin" style="display:none">👑 Admin Ao Vivo</button>
 </div>
-
-<div style="display:flex;overflow:auto;padding:8px 0">
-<button class="tab active">🛒 PDV</button><button class="tab">📦 Estoque</button><button class="tab">👥 Clientes</button>
+<div id="aba-pdv" class="aba">
+<div class="card"><h3 style="margin:0 0 8px">Produtos</h3><input id="buscaProd" placeholder="Buscar..." onkeyup="renderProdutos(this.value)"><div id="listaProdutos"></div></div>
+<div class="card"><h3>🛒 Venda <span id="numVenda">0</span> | <select id="clienteVenda" style="width:130px;display:inline-block"><option>Avulso</option></select> <span id="sincStatus" style="float:right;font-size:11px;color:#22c55e"></span></h3><div id="carrinho"></div><h2 style="text-align:right;color:#174ea6">TOTAL R$ <span id="total">0.00</span></h2><select id="pagamento"><option>💵 Dinheiro</option><option>⚡ Pix</option><option>💳 Cartão Crédito</option><option>💳 Cartão Débito</option><option>🧾 Fiado</option></select><button class="final" onclick="finalizar()">✓ Finalizar</button><button style="width:100%;margin-top:8px;padding:10px;border-radius:10px;border:1px solid #174ea6;background:#fff;color:#174ea6;font-weight:700" onclick="limparCarrinho()">Limpar</button></div>
 </div>
-
-<div class="card">
-<h3 style="margin:0 0 8px">Produtos</h3>
-<input placeholder="Buscar..." onkeyup="buscar(this.value)">
-<div id="listaProdutos"></div>
+<div id="aba-produtos" class="aba hidden"><div class="card"><h3>📦 Cadastro de Produtos</h3><label class="label">Nome</label><input id="pNome" placeholder="Ex: Coca-Cola 350ml"><div class="row"><div><label class="label">Preço Venda</label><input id="pPreco" type="number" step="0.01"></div><div><label class="label">Custo</label><input id="pCusto" type="number" step="0.01"></div></div><div class="row"><div><label class="label">Estoque</label><input id="pEstoque" type="number"></div><div><label class="label">Categoria</label><select id="pCat"><option>Bebidas</option><option>Salgados</option><option>Doces</option><option>Outros</option></select></div></div><label class="label">Código Barras</label><input id="pCod"><button class="final" onclick="salvarProduto()" style="padding:10px;font-size:14px;margin-top:8px">💾 Salvar Produto</button><div id="listaCadastroProdutos" style="margin-top:12px"></div></div></div>
+<div id="aba-estoque" class="aba hidden"><div class="card"><h3>📊 Estoque</h3><div class="row"><div class="card" style="background:#fef3c7;margin:0;text-align:center"><small>Baixo</small><h2 id="estBaixo">0</h2></div><div class="card" style="background:#dcfce7;margin:0;text-align:center"><small>Total</small><h2 id="estTotal">0</h2></div></div><div id="listaEstoque"></div></div></div>
+<div id="aba-clientes" class="aba hidden"><div class="card"><h3>👥 Clientes</h3><label class="label">Nome</label><input id="cNome"><div class="row"><div><label class="label">Tel</label><input id="cTel"></div><div><label class="label">CPF</label><input id="cCpf"></div></div><label class="label">Endereço</label><input id="cEnd"><button class="final" onclick="salvarCliente()" style="padding:10px;font-size:14px">💾 Salvar Cliente</button><div id="listaClientes" style="margin-top:12px"></div></div></div>
+<div id="aba-fornecedores" class="aba hidden"><div class="card"><h3>🚚 Fornecedores</h3><label class="label">Empresa</label><input id="fNome"><div class="row"><div><label class="label">Telefone</label><input id="fTel"></div><div><label class="label">CNPJ</label><input id="fCnpj"></div></div><label class="label">Produtos que fornece</label><input id="fProd"><button class="final" onclick="salvarFornecedor()" style="padding:10px;font-size:14px">💾 Salvar Fornecedor</button><div id="listaFornecedores" style="margin-top:12px"></div></div></div>
+<div id="aba-caixa" class="aba hidden"><div class="card"><h3>💰 Caixa - <span id="caixaNome"></span></h3><div id="resumoCaixa"></div><div id="historicoCaixa"></div></div></div>
+<div id="aba-relatorios" class="aba hidden"><div class="card"><h3>📈 Relatórios</h3><div class="row"><div class="card" style="margin:0;background:#dbeafe;text-align:center"><small>Hoje</small><h3 id="relFat">R$ 0,00</h3></div><div class="card" style="margin:0;background:#dcfce7;text-align:center"><small>Lucro</small><h3 id="relLucro">R$ 0,00</h3></div></div><div id="relPag"></div><div id="relProd"></div></div></div>
+<div id="aba-admin" class="aba hidden"><div class="card" style="border:2px solid #22c55e"><h3>👑 CENTRAL AO VIVO</h3><h2 id="adminFatTotal" style="color:#22c55e">R$ 0,00</h2><small id="adminQtd">0 vendas</small><div id="adminPorCaixa"></div><h4>🔴 Vendas agora</h4><div id="adminAoVivo"></div></div></div>
 </div>
-
-<div class="card">
-<h3>🛒 Venda <span id="numVenda">0</span> | <select id="cliente" style="width:120px;display:inline"><option>Avulso</option></select> <span style="float:right" id="sincStatus"></span></h3>
-<div id="carrinho"></div>
-<h2 style="text-align:right;color:#174ea6">TOTAL R$ <span id="total">0.00</span></h2>
-<button class="final" onclick="finalizar()">✓ Finalizar</button>
-<button style="width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1px solid #174ea6;background:#fff;color:#174ea6;font-weight:700" onclick="limpar()">Limpar</button>
-</div>
-
-<div id="painelAdmin" class="card" style="display:none;border:2px solid #22c55e">
-<h3>🔴 Ao Vivo - Todos os Caixas</h3>
-<div id="aoVivo"></div>
-</div>
-</div>
-
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCUAnzfTlUeEEN6bXL-rSPWzudobwdEeUI",
-  authDomain: "venda-no-ponto.firebaseapp.com",
-  databaseURL: "https://venda-no-ponto-default-rtdb.firebaseio.com",
-  projectId: "venda-no-ponto",
-  storageBucket: "venda-no-ponto.firebasestorage.app",
-  messagingSenderId: "891438595344",
-  appId: "1:891438595344:web:eac019ede805eb4240f995"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.database();
-let LOJA="",CAIXA="",produtos=[{id:1,nome:"Coca-Cola 350ml",preco:5.00,estoque:20},{id:2,nome:"Pão de Queijo",preco:4.50,estoque:15}],carrinho=[],total=0;
-
-firebase.database().ref(".info/connected").on("value",s=>{
- document.getElementById("fbStatus").innerHTML=s.val()?"🟢 Firebase AO VIVO conectado!":"🔴 Offline";
-});
-
-function entrar(){
- LOJA=document.getElementById("lojaId").value.toUpperCase();
- CAIXA=document.getElementById("caixaId").value;
- document.getElementById("login").style.display="none";
- document.getElementById("app").style.display="block";
- document.getElementById("labelCaixa").innerText=CAIXA;
- document.getElementById("labelLoja").innerText=LOJA;
- if(CAIXA==="ADMIN"){document.getElementById("adminBar").style.display="block";document.getElementById("painelAdmin").style.display="block";}
- renderProdutos(); escutar();
-}
-function renderProdutos(filtro=""){
- const div=document.getElementById("listaProdutos");
- let lista=produtos.filter(p=>p.nome.toLowerCase().includes(filtro.toLowerCase()));
- div.innerHTML=lista.map(p=>`<div class="prod"><div><b>${p.nome}</b> <small>(${p.estoque})</small><br><span style="color:#174ea6">R$ ${p.preco.toFixed(2)}</span></div><button class="add" onclick="add(${p.id})">+</button></div>`).join("");
-}
-function buscar(v){renderProdutos(v)}
-function add(id){
- let p=produtos.find(x=>x.id===id);
- if(p.estoque<=0){alert("Sem estoque");return}
- let item=carrinho.find(x=>x.id===id);
- if(item) item.qtd++; else carrinho.push({...p,qtd:1});
- p.estoque--; renderProdutos(); renderCarrinho();
-}
-function renderCarrinho(){
- let div=document.getElementById("carrinho");
- div.innerHTML=carrinho.map(i=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee"><span>${i.nome} x${i.qtd}</span><span>R$ ${(i.preco*i.qtd).toFixed(2)} <button onclick="rem(${i.id})" style="margin-left:6px">x</button></span></div>`).join("")||"<small style='color:#94a3b8'>Carrinho vazio</small>";
- total=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
- document.getElementById("total").innerText=total.toFixed(2);
- document.getElementById("numVenda").innerText=carrinho.length;
-}
-function rem(id){
- let i=carrinho.find(x=>x.id===id); let p=produtos.find(x=>x.id===id);
- p.estoque+=i.qtd; carrinho=carrinho.filter(x=>x.id!==id); renderProdutos(); renderCarrinho();
-}
-function limpar(){ carrinho.forEach(i=>{let p=produtos.find(x=>x.id===i.id);p.estoque+=i.qtd}); carrinho=[]; renderProdutos(); renderCarrinho(); }
-function finalizar(){
- if(carrinho.length===0){alert("Carrinho vazio");return}
- let venda={caixaId:CAIXA,lojaId:LOJA,produtos:carrinho,total:total,cliente:document.getElementById("cliente").value,data:new Date().toISOString(),hora:new Date().toLocaleTimeString("pt-BR"),timestamp:Date.now()};
- document.getElementById("sincStatus").innerText="⏳ Sincronizando...";
- db.ref(`lojas/${LOJA}/vendas`).push(venda).then(()=>{
-   document.getElementById("sincStatus").innerText="✅ Ao vivo!";
-   setTimeout(()=>document.getElementById("sincStatus").innerText="",2000);
-   carrinho=[]; renderCarrinho();
- });
-}
-function escutar(){
- db.ref(`lojas/${LOJA}/vendas`).orderByChild("timestamp").limitToLast(20).on("value",snap=>{
-   let vendas=[];snap.forEach(c=>vendas.push(c.val()));vendas.reverse();
-   if(CAIXA==="ADMIN"){
-     let hoje=vendas.filter(v=>new Date(v.data).toDateString()===new Date().toDateString());
-     let fat=hoje.reduce((s,v)=>s+v.total,0);
-     document.getElementById("fat").innerText="R$ "+fat.toFixed(2);
-     document.getElementById("qtdVendas").innerText=hoje.length+" vendas";
-     document.getElementById("aoVivo").innerHTML=vendas.map(v=>`<div style="padding:8px;background:#f8fafc;margin:5px 0;border-radius:8px;border-left:4px solid #22c55e"><b>${v.caixaId}</b> - R$ ${v.total.toFixed(2)} às ${v.hora}<br><small>${v.produtos?.map(p=>p.nome+" x"+p.qtd).join(", ")}</small></div>`).join("");
-   }
- });
-}
+const firebaseConfig={apiKey:"AIzaSyCUAnzfTlUeEEN6bXL-rSPWzudobwdEeUI",authDomain:"venda-no-ponto.firebaseapp.com",databaseURL:"https://venda-no-ponto-default-rtdb.firebaseio.com",projectId:"venda-no-ponto",storageBucket:"venda-no-ponto.firebasestorage.app",messagingSenderId:"891438595344",appId:"1:891438595344:web:eac019ede805eb4240f995"};
+firebase.initializeApp(firebaseConfig);const db=firebase.database();
+let LOJA="",CAIXA="",produtos=[{id:"1",nome:"Coca-Cola 350ml",preco:5,custo:3,estoque:20,cat:"Bebidas"},{id:"2",nome:"Pão de Queijo",preco:4.5,custo:2,estoque:15,cat:"Salgados"}],clientes=[{nome:"Avulso"}],fornecedores=[],carrinho=[],total=0,vendasLocais=[];
+firebase.database().ref(".info/connected").on("value",s=>{document.getElementById("fbStatus").innerHTML=s.val()?"🟢 Firebase AO VIVO conectado!":"🔴 Offline";document.getElementById("sincInfo").innerText=s.val()?"🟢 online":"🔴 offline";});
+function entrar(){LOJA=document.getElementById("lojaId").value.toUpperCase();CAIXA=document.getElementById("caixaId").value;document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";document.getElementById("labelCaixa").innerText=CAIXA;document.getElementById("labelLoja").innerText=LOJA;document.getElementById("caixaNome").innerText=CAIXA;if(CAIXA==="ADMIN"){document.getElementById("tabAdmin").style.display="inline-block";document.getElementById("adminFat").style.display="inline-block";}renderProdutos();renderClientesSelect();renderCadastroProdutos();escutarTudo();}
+function aba(n,el){document.querySelectorAll(".aba").forEach(a=>a.classList.add("hidden"));document.getElementById("aba-"+n).classList.remove("hidden");document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));if(el)el.classList.add("active");}
+function renderProdutos(f=""){let div=document.getElementById("listaProdutos");let lista=produtos.filter(p=>p.nome.toLowerCase().includes(f.toLowerCase()));div.innerHTML=lista.map(p=>`<div class="prod"><div><b>${p.nome}</b> <small>(${p.estoque})</small><br><span style="color:#174ea6;font-weight:700">R$ ${p.preco.toFixed(2)}</span></div><button class="add" onclick="addCarrinho('${p.id}')">+</button></div>`).join("");document.getElementById("estTotal").innerText=produtos.reduce((s,p)=>s+p.estoque,0);document.getElementById("estBaixo").innerText=produtos.filter(p=>p.estoque<=5).length;document.getElementById("listaEstoque").innerHTML=produtos.map(p=>`<div class="prod"><div><b>${p.nome}</b> - ${p.cat}<br><small>Est: ${p.estoque}</small></div><b>R$ ${p.preco.toFixed(2)}</b></div>`).join("");}
+function addCarrinho(id){let p=produtos.find(x=>x.id===id);if(p.estoque<=0){alert("Sem estoque");return}let it=carrinho.find(x=>x.id===id);if(it)it.qtd++;else carrinho.push({id:p.id,nome:p.nome,preco:p.preco,custo:p.custo,qtd:1});p.estoque--;renderProdutos();renderCarrinho();}
+function renderCarrinho(){document.getElementById("carrinho").innerHTML=carrinho.map(i=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee"><span>${i.nome} x${i.qtd}</span><span>R$ ${(i.preco*i.qtd).toFixed(2)} <button onclick="remCarrinho('${i.id}')" style="border:none;background:#fee2e2;border-radius:6px">x</button></span></div>`).join("")||"<small>Carrinho vazio</small>";total=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);document.getElementById("total").innerText=total.toFixed(2);document.getElementById("numVenda").innerText=carrinho.length;}
+function remCarrinho(id){let i=carrinho.find(x=>x.id===id);let p=produtos.find(x=>x.id===id);p.estoque+=i.qtd;carrinho=carrinho.filter(x=>x.id!==id);renderProdutos();renderCarrinho();}
+function limparCarrinho(){carrinho.forEach(i=>{let p=produtos.find(x=>x.id===i.id);if(p)p.estoque+=i.qtd});carrinho=[];renderProdutos();renderCarrinho();}
+function salvarProduto(){let nome=document.getElementById("pNome").value.trim();let preco=parseFloat(document.getElementById("pPreco").value)||0;let custo=parseFloat(document.getElementById("pCusto").value)||0;let est=parseInt(document.getElementById("pEstoque").value)||0;let cat=document.getElementById("pCat").value;let cod=document.getElementById("pCod").value;if(!nome||preco<=0){alert("Nome e preço");return}let id=Date.now().toString();let prod={id,nome,preco,custo,estoque:est,cat,cod};produtos.push(prod);db.ref(`lojas/${LOJA}/produtos/${id}`).set(prod);document.getElementById("pNome").value="";document.getElementById("pPreco").value="";document.getElementById("pCusto").value="";document.getElementById("pEstoque").value="";renderProdutos();renderCadastroProdutos();}
+function renderCadastroProdutos(){document.getElementById("listaCadastroProdutos").innerHTML=produtos.map(p=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #eee"><span><b>${p.nome}</b> R$ ${p.preco.toFixed(2)} (${p.estoque})</span><button onclick="delProd('${p.id}')" style="border:none;background:#fee2e2;border-radius:6px">🗑️</button></div>`).join("");}
+function delProd(id){if(!confirm("Apagar?"))return;produtos=produtos.filter(p=>p.id!==id);db.ref(`lojas/${LOJA}/produtos/${id}`).remove();renderProdutos();renderCadastroProdutos();}
+function salvarCliente(){let nome=document.getElementById("cNome").value.trim();let tel=document.getElementById("cTel").value.trim();let cpf=document.getElementById("cCpf").value.trim();let end=document.getElementById("cEnd").value.trim();if(!nome){alert("Nome");return}let cli={id:Date.now().toString(),nome,tel,cpf,end};clientes.push(cli);db.ref(`lojas/${LOJA}/clientes/${cli.id}`).set(cli);document.getElementById("cNome").value="";document.getElementById("cTel").value="";document.getElementById("cCpf").value="";document.getElementById("cEnd").value="";renderClientes();}
+function renderClientes(){document.getElementById("listaClientes").innerHTML=clientes.slice(1).map(c=>`<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${c.nome}</b> ${c.tel}<br><small>${c.end||""}</small></div>`).join("")||"<small>Nenhum</small>";renderClientesSelect();}
+function renderClientesSelect(){let sel=document.getElementById("clienteVenda");sel.innerHTML=clientes.map(c=>`<option>${c.nome}</option>`).join("");}
+function salvarFornecedor(){let nome=document.getElementById("fNome").value.trim();let tel=document.getElementById("fTel").value.trim();let cnpj=document.getElementById("fCnpj").value.trim();let prod=document.getElementById("fProd").value.trim();if(!nome){alert("Nome");return}let f={id:Date.now().toString(),nome,tel,cnpj,produtos:prod};fornecedores.push(f);db.ref(`lojas/${LOJA}/fornecedores/${f.id}`).set(f);document.getElementById("fNome").value="";document.getElementById("fTel").value="";document.getElementById("fCnpj").value="";document.getElementById("fProd").value="";renderFornecedores();}
+function renderFornecedores(){document.getElementById("listaFornecedores").innerHTML=fornecedores.map(f=>`<div style="padding:8px 0;border-bottom:1px solid #eee"><b>${f.nome}</b> ${f.tel}<br><small>${f.produtos||""}</small></div>`).join("")||"<small>Nenhum</small>";}
+function finalizar(){if(carrinho.length===0){alert("Carrinho vazio");return}let venda={caixaId:CAIXA,lojaId:LOJA,produtos:carrinho,total:total,cliente:document.getElementById("clienteVenda").value,pagamento:document.getElementById("pagamento").value,data:new Date().toISOString(),hora:new Date().toLocaleTimeString("pt-BR"),timestamp:Date.now(),lucro:carrinho.reduce((s,i)=>s+(i.preco-(i.custo||0))*i.qtd,0)};document.getElementById("sincStatus").innerText="⏳ Sincronizando...";db.ref(`lojas/${LOJA}/vendas`).push(venda).then(()=>{document.getElementById("sincStatus").innerText="✅ Ao vivo!";setTimeout(()=>document.getElementById("sincStatus").innerText="",2000);carrinho=[];renderCarrinho();});}
+function escutarTudo(){db.ref(`lojas/${LOJA}/produtos`).on("value",s=>{if(!s.exists())return;let l=[];s.forEach(c=>l.push(c.val()));if(l.length>0){produtos=l;renderProdutos();renderCadastroProdutos();}});db.ref(`lojas/${LOJA}/clientes`).on("value",s=>{if(!s.exists())return;let l=[{nome:"Avulso"}];s.forEach(c=>l.push(c.val()));clientes=l;renderClientes();});db.ref(`lojas/${LOJA}/fornecedores`).on("value",s=>{if(!s.exists())return;let l=[];s.forEach(c=>l.push(c.val()));fornecedores=l;renderFornecedores();});db.ref(`lojas/${LOJA}/vendas`).orderByChild("timestamp").limitToLast(100).on("value",s=>{let v=[];s.forEach(c=>v.push(c.val()));v.reverse();vendasLocais=v;let hoje=v.filter(x=>new Date(x.data).toDateString()===new Date().toDateString());let fat=hoje.reduce((s,x)=>s+x.total,0);let lucro=hoje.reduce((s,x)=>s+(x.lucro||0),0);document.getElementById("fat").innerText=fat.toFixed(2);document.getElementById("relFat").innerText="R$ "+fat.toFixed(2);document.getElementById("relLucro").innerText="R$ "+lucro.toFixed(2);document.getElementById("adminFatTotal").innerText="R$ "+fat.toFixed(2);document.getElementById("adminQtd").innerText=hoje.length+" vendas";let porCaixa={};hoje.forEach(x=>{porCaixa[x.caixaId]=(porCaixa[x.caixaId]||0)+x.total});document.getElementById("adminPorCaixa").innerHTML=Object.entries(porCaixa).map(([c,t])=>`<div style="display:flex;justify-content:space-between"><span>${c}</span><b>R$ ${t.toFixed(2)}</b></div>`).join("");document.getElementById("adminAoVivo").innerHTML=v.slice(0,20).map(x=>`<div style="padding:8px;background:#f8fafc;margin:5px 0;border-radius:8px;border-left:4px solid #22c55e"><b>${x.caixaId}</b> R$ ${x.total.toFixed(2)} ${x.hora}<br><small>${x.produtos?.map(p=>p.nome).join(", ")}</small></div>`).join("");let porPag={};hoje.forEach(x=>{porPag[x.pagamento]=(porPag[x.pagamento]||0)+x.total});document.getElementById("relPag").innerHTML=Object.entries(porPag).map(([p,t])=>`<div style="display:flex;justify-content:space-between;padding:4px 0"><span>${p}</span><b>R$ ${t.toFixed(2)}</b></div>`).join("");let prodCount={};hoje.forEach(x=>{x.produtos?.forEach(p=>{prodCount[p.nome]=(prodCount[p.nome]||0)+p.qtd})});document.getElementById("relProd").innerHTML=Object.entries(prodCount).map(([n,q])=>`<div style="display:flex;justify-content:space-between"><span>${n}</span><b>${q} un</b></div>`).join("");document.getElementById("resumoCaixa").innerHTML=`<div class="row"><div class="card" style="margin:0;text-align:center;background:#dbeafe"><small>Vendas</small><h3>${hoje.filter(x=>CAIXA==="ADMIN"||x.caixaId===CAIXA).length}</h3></div><div class="card" style="margin:0;text-align:center;background:#dcfce7"><small>Total</small><h3>R$ ${hoje.filter(x=>CAIXA==="ADMIN"||x.caixaId===CAIXA).reduce((s,x)=>s+x.total,0).toFixed(2)}</h3></div></div>`;});}
 </script>
 </body>
 </html>
