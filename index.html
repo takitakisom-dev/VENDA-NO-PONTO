@@ -7,118 +7,171 @@
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,Arial}
-body{background:#0f172a;color:#e2e8f0;min-height:100vh}
-.card{max-width:420px;margin:40px auto;background:#1e293b;padding:24px;border-radius:16px}
-input,select,button{width:100%;padding:12px;margin:6px 0;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:16px}
-button{background:#f59e0b;color:#000;font-weight:800;cursor:pointer;border:none}
-.top{background:#1e293b;padding:10px;display:flex;flex-wrap:wrap;gap:6px;position:sticky;top:0;z-index:10}
-.top button{width:auto;padding:8px 12px;font-size:13px;background:#334155;color:#fff}
-.top button.on{background:#f59e0b;color:#000}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.prod{border:1px solid #334155;padding:10px;border-radius:12px;background:#1e293b}
-.badge{padding:2px 8px;border-radius:20px;font-size:11px;background:#22c55e;color:#000}
-.total{font-size:28px;font-weight:900;color:#f59e0b}
-#teclado{position:fixed;bottom:0;left:0;right:0;background:#1e293b;padding:8px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;z-index:20}
-#teclado button{background:#334155;color:#fff;height:56px;font-size:20px}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:50}
-.modal.open{display:flex}
-.modal>div{background:#1e293b;padding:20px;border-radius:16px;width:90%;max-width:400px}
-.install{position:relative;bottom:auto;margin-top:16px;background:#f59e0b;color:#000;padding:14px;border-radius:14px;text-align:center;font-weight:900}
-.aba{display:none;padding:12px}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Inter',system-ui}
+body{background:#0f172a;color:#e2e8f0;min-height:100vh;padding-bottom:220px}
+.card{max-width:420px;margin:30px auto;background:#1e293b;padding:24px;border-radius:20px;box-shadow:0 20px 40px rgba(0,0,0,.5)}
+input,select{width:100%;padding:14px;margin:6px 0;border-radius:12px;border:1px solid #334155;background:#0f172a;color:#fff;font-size:16px;outline:none}
+input:focus{border-color:#f59e0b}
+.btn{width:100%;padding:14px;margin:6px 0;border-radius:12px;border:none;background:#f59e0b;color:#000;font-weight:900;cursor:pointer;font-size:15px}
+.btn:active{transform:scale(.97)}
+.btn-ghost{background:#334155;color:#fff}
+.btn-red{background:#ef4444;color:#fff}
+.top{background:#1e293b;padding:10px;display:flex;gap:6px;overflow-x:auto;white-space:nowrap;position:sticky;top:0;z-index:30;scrollbar-width:none}
+.top::-webkit-scrollbar{display:none}
+.top button{width:auto;padding:10px 14px;font-size:12px;border-radius:999px;background:#0f172a;color:#cbd5e1;border:1px solid #334155;flex-shrink:0}
+.top button.on{background:#f59e0b;color:#000;border-color:#f59e0b;font-weight:800}
+.aba{display:none;padding:14px;max-width:1100px;margin:0 auto}
 .aba.ativa{display:block}
-.hidden{display:none!important}
+.grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(140px,1fr)); gap:10px }
+.prod{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.prod b{font-size:13px;line-height:1.2}
+.prod.preco{color:#f59e0b;font-weight:900;font-size:16px}
+.prod button{margin-top:auto;padding:10px;font-size:13px}
+.totalBox{background:#1e293b;border:1px solid #f59e0b;border-radius:16px;padding:14px;margin:10px 0}
+.total{font-size:32px;font-weight:900;color:#f59e0b}
+.badge{background:#22c55e;color:#000;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:800}
+.carrinhoItem{background:#0f172a;border:1px solid #334155;padding:10px;border-radius:12px;margin:6px 0;display:flex;justify-content:space-between;align-items:center}
+#teclado{position:fixed;bottom:0;left:0;right:0;background:#1e293b;padding:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;z-index:40;border-top:1px solid #334155}
+#teclado button{background:#0f172a;color:#fff;height:58px;font-size:20px;border-radius:12px;border:1px solid #334155}
+#teclado button.op{background:#334155}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.75);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.open{display:flex}
+.modal>div{background:#1e293b;padding:20px;border-radius:20px;width:100%;max-width:420px;max-height:90vh;overflow:auto}
+.install{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#000;padding:14px;border-radius:14px;text-align:center;font-weight:900;margin-top:16px;cursor:pointer;box-shadow:0 8px 20px rgba(245,158,11,.3)}
+.pill{padding:6px 10px;border-radius:999px;background:#0f172a;border:1px solid #334155;font-size:12px}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:8px;border-bottom:1px solid #334155;text-align:left;font-size:13px}
 </style>
 </head>
 <body>
 <div id="login" class="card">
-<h1 style="text-align:center">🔥 TAKI VENDAS PRO</h1>
-<p style="text-align:center;opacity:.7;margin:8px 0">Mercado Taki - Caraguatatuba</p>
+<h1 style="text-align:center;font-size:28px">🔥 TAKI VENDAS PRO</h1>
+<p style="text-align:center;opacity:.6;margin:6px 0 14px">Mercado Taki - Caraguatatuba - V30 Completo</p>
 <input id="user" placeholder="Usuário" value="admin">
 <input id="pass" type="password" placeholder="Senha" value="1234">
-<button onclick="doLogin()">ENTRAR</button>
-<div style="margin-top:12px;font-size:12px;opacity:.6">Usuário: admin / Senha: 1234</div>
-<button id="btnInstall" class="install" onclick="instalarApp()">📲 INSTALAR APP NO CELULAR - CLIQUE AQUI</button>
+<button class="btn" onclick="doLogin()">ENTRAR NO PDV</button>
+<p style="font-size:11px;opacity:.5;margin-top:10px;text-align:center">admin / 1234</p>
+<div id="btnInstall" class="install" onclick="instalarApp()">📲 INSTALAR APP NO CELULAR - CLIQUE AQUI</div>
+<div id="pwaStatus" style="font-size:11px;margin-top:8px;opacity:.7;text-align:center"></div>
 </div>
+
 <div id="app" style="display:none">
-<div class="top">
-<button onclick="showAba('pdv')" id="b-pdv" class="on">PDV</button>
-<button onclick="showAba('empresa')" id="b-empresa">Empresa</button>
-<button onclick="showAba('produtos')" id="b-produtos">Produtos</button>
-<button onclick="showAba('estoque')" id="b-estoque">Estoque</button>
-<button onclick="showAba('clientes')" id="b-clientes">Clientes</button>
-<button onclick="showAba('fornecedores')" id="b-fornecedores">Fornecedores</button>
-<button onclick="showAba('balanca')" id="b-balanca">Balança</button>
-<button onclick="showAba('caixa')" id="b-caixa">Caixa</button>
-<button onclick="showAba('relatorios')" id="b-relatorios">Relatórios</button>
-<button onclick="showAba('cancelados')" id="b-cancelados">Cancelados</button>
-<button onclick="showAba('sync')" id="b-sync">Sync</button>
-<button onclick="showAba('senhas')" id="b-senhas">Senhas</button>
-<button onclick="showAba('admin')" id="b-admin">Admin</button>
+<div class="top" id="topMenu">
+<button onclick="showAba('pdv')" id="b-pdv" class="on">🛒 PDV</button>
+<button onclick="showAba('empresa')" id="b-empresa">🏢 Empresa</button>
+<button onclick="showAba('produtos')" id="b-produtos">📦 Produtos</button>
+<button onclick="showAba('estoque')" id="b-estoque">📊 Estoque</button>
+<button onclick="showAba('clientes')" id="b-clientes">👥 Clientes</button>
+<button onclick="showAba('fornecedores')" id="b-fornecedores">🚚 Fornecedores</button>
+<button onclick="showAba('balanca')" id="b-balanca">⚖️ Balança</button>
+<button onclick="showAba('caixa')" id="b-caixa">💰 Caixa</button>
+<button onclick="showAba('relatorios')" id="b-relatorios">📈 Relatórios</button>
+<button onclick="showAba('cancelados')" id="b-cancelados">❌ Cancelados</button>
+<button onclick="showAba('sync')" id="b-sync">🔄 Sync</button>
+<button onclick="showAba('senhas')" id="b-senhas">🔑 Senhas</button>
+<button onclick="showAba('admin')" id="b-admin">⚙️ Admin</button>
 <button onclick="logout()" style="background:#ef4444;color:#fff">Sair</button>
 </div>
+
 <div id="aba-pdv" class="aba ativa">
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
 <h2>🛒 PDV - Salgados congelados coxinha</h2>
-<div style="display:flex;gap:8px;margin:8px 0"><span class="badge">ABERTO</span><span id="hora"></span></div>
-<input id="buscaProd" placeholder="Buscar produto..." oninput="filtrarProds()">
-<div id="listaProds" class="grid" style="margin:10px 0;max-height:30vh;overflow:auto"></div>
-<h3>Carrinho</h3><div id="carrinho"></div>
-<div class="total">Total: R$ <span id="total">0,00</span></div>
-<div style="display:flex;gap:8px"><button onclick="finalizarVenda('dinheiro')">💵 Dinheiro</button><button onclick="finalizarVenda('pix')" style="background:#22c55e">PIX</button><button onclick="finalizarVenda('cartao')" style="background:#3b82f6;color:#fff">Cartão</button></div>
-<button onclick="cancelarVenda()" style="background:#334155;color:#fff;margin-top:6px">Cancelar Venda</button><div style="height:200px"></div>
+<div><span id="statusLoja" class="badge">ABERTO</span> <span id="hora" class="pill"></span> <span class="pill">Avulso</span> <span class="pill">1299998888</span></div>
 </div>
-<div id="aba-empresa" class="aba hidden"><h2>🏢 Empresa</h2><input id="empNome" value="Mercado Taki"><input id="empCnpj" placeholder="CNPJ"><input id="empTel" value="1299998888"><input id="empEnd" placeholder="Endereço"><button onclick="salvarEmpresa()">Salvar</button></div>
-<div id="aba-produtos" class="aba hidden"><h2>📦 Produtos</h2><input id="pNome" placeholder="Nome"><input id="pPreco" type="number" step="0.01" placeholder="Preço"><input id="pEstoque" type="number" placeholder="Estoque"><button onclick="addProduto()">Adicionar</button><div id="listaProdutosAdmin"></div></div>
-<div id="aba-estoque" class="aba hidden"><h2>📊 Estoque</h2><div id="estoqueLista"></div></div>
-<div id="aba-clientes" class="aba hidden"><h2>👥 Clientes</h2><input id="cNome" placeholder="Nome"><input id="cTel" placeholder="Telefone"><button onclick="addCliente()">Add</button><div id="listaClientes"></div></div>
-<div id="aba-fornecedores" class="aba hidden"><h2>🚚 Fornecedores</h2><input id="fNome" placeholder="Nome"><button onclick="addFornecedor()">Add</button><div id="listaFornecedores"></div></div>
-<div id="aba-balanca" class="aba hidden"><h2>⚖️ Balança</h2><input id="bPeso" type="number" placeholder="Peso kg"><button onclick="calcBalanca()">Calcular</button><div id="bResult"></div></div>
-<div id="aba-caixa" class="aba hidden"><h2>💰 Caixa</h2><div>Saldo: R$ <span id="caixaSaldo">0,00</span></div><input id="caixaValor" type="number" placeholder="Valor"><button onclick="caixaEntrada()">Entrada</button><button onclick="caixaSaida()" style="background:#ef4444;color:#fff">Saída</button><div id="caixaHist"></div></div>
-<div id="aba-relatorios" class="aba hidden"><h2>📈 Relatórios</h2><div id="relatorioVendas"></div><button onclick="gerarRelatorio()">Gerar Relatório</button></div>
-<div id="aba-cancelados" class="aba hidden"><h2>❌ Cancelados</h2><div id="listaCancelados"></div></div>
-<div id="aba-sync" class="aba hidden"><h2>🔄 Sync</h2><button onclick="exportarDados()">Exportar JSON</button><input type="file" id="fileImport"><button onclick="importarDados()">Importar</button></div>
-<div id="aba-senhas" class="aba hidden"><h2>🔑 Senhas</h2><input id="oldPass" type="password" placeholder="Senha atual"><input id="newPass" type="password" placeholder="Nova"><button onclick="trocarSenha()">Trocar</button></div>
-<div id="aba-admin" class="aba hidden"><h2>⚙️ Admin V29 PWA</h2><button onclick="limparTudo()" style="background:#ef4444;color:#fff">Limpar tudo</button><div id="pwaStatus" style="margin-top:10px;padding:10px;background:#0f172a;border-radius:10px;font-size:12px"></div></div>
+<input id="buscaProd" placeholder="🔍 Buscar produto, código ou EAN..." oninput="filtrarProds()" style="margin-top:12px">
+<div style="display:flex;gap:8px;margin:8px 0"><span class="pill">F1 Dinheiro</span><span class="pill">F2 PIX</span><span class="pill">F3 Cartão</span></div>
+<div id="listaProds" class="grid" style="margin:12px 0"></div>
+
+<div class="totalBox">
+<div style="display:flex;justify-content:space-between"><span>Carrinho (<span id="qtdItens">0</span>)</span><span class="pill" onclick="cancelarVenda()" style="cursor:pointer">Limpar</span></div>
+<div id="carrinho" style="margin:10px 0;max-height:25vh;overflow:auto"></div>
+<div style="display:flex;justify-content:space-between;align-items:center"><span>Total</span><span class="total">R$ <span id="total">0,00</span></span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px">
+<button class="btn" onclick="finalizarVenda('dinheiro')">💵 DINHEIRO</button>
+<button class="btn" style="background:#22c55e" onclick="finalizarVenda('pix')">PIX</button>
+<button class="btn" style="background:#3b82f6;color:#fff" onclick="finalizarVenda('cartao')">CARTÃO</button>
 </div>
-<div id="modalRecibo" class="modal"><div><h3>✅ Venda Finalizada</h3><div id="reciboTexto"></div><button onclick="fecharRecibo()">Fechar</button></div></div>
-<div id="teclado"><button onclick="tecla('7')">7</button><button onclick="tecla('8')">8</button><button onclick="tecla('9')">9</button><button onclick="tecla('4')">4</button><button onclick="tecla('5')">5</button><button onclick="tecla('6')">6</button><button onclick="tecla('1')">1</button><button onclick="tecla('2')">2</button><button onclick="tecla('3')">3</button><button onclick="tecla('0')">0</button><button onclick="tecla('.')">.</button><button onclick="tecla('C')" style="background:#ef4444">C</button></div>
+</div>
+<div style="height:180px"></div>
+</div>
+
+<div id="aba-empresa" class="aba"><h2>🏢 Empresa</h2><input id="empNome" value="Mercado Taki - Caraguatatuba"><input id="empCnpj" placeholder="CNPJ 00.000.000/0001-00"><input id="empTel" value="1299998888"><input id="empEnd" placeholder="Endereço"><button class="btn" onclick="salvarEmpresa()">Salvar Empresa</button></div>
+
+<div id="aba-produtos" class="aba"><h2>📦 Cadastro de Produtos</h2>
+<div style="background:#1e293b;padding:14px;border-radius:16px;border:1px solid #334155">
+<input id="pNome" placeholder="Nome do produto ex: Coxinha">
+<input id="pPreco" type="number" step="0.01" placeholder="Preço ex: 5.50">
+<input id="pCusto" type="number" step="0.01" placeholder="Custo">
+<input id="pEstoque" type="number" placeholder="Estoque inicial">
+<input id="pCodigo" placeholder="Código/EAN (opcional)">
+<button class="btn" onclick="addProduto()">+ Adicionar Produto</button>
+</div>
+<div id="listaProdutosAdmin" style="margin-top:12px"></div>
+</div>
+
+<div id="aba-estoque" class="aba"><h2>📊 Estoque Atual</h2><input placeholder="Filtrar estoque..." oninput="filtrarEstoque(this.value)"><div id="estoqueLista"></div></div>
+<div id="aba-clientes" class="aba"><h2>👥 Clientes</h2><div style="display:flex;gap:6px"><input id="cNome" placeholder="Nome"><input id="cTel" placeholder="Telefone"></div><button class="btn" onclick="addCliente()">Salvar Cliente</button><div id="listaClientes"></div></div>
+<div id="aba-fornecedores" class="aba"><h2>🚚 Fornecedores</h2><input id="fNome" placeholder="Nome fornecedor"><button class="btn" onclick="addFornecedor()">Salvar</button><div id="listaFornecedores"></div></div>
+<div id="aba-balanca" class="aba"><h2>⚖️ Balança</h2><input id="bPeso" type="number" step="0.001" placeholder="Peso kg"><input id="bPrecoKg" type="number" value="30" placeholder="Preço KG"><button class="btn" onclick="calcBalanca()">Calcular</button><div id="bResult" class="totalBox"></div></div>
+<div id="aba-caixa" class="aba"><h2>💰 Caixa</h2><div class="totalBox">Saldo: R$ <span id="caixaSaldo">0,00</span></div><div style="display:flex;gap:6px"><input id="caixaValor" type="number" placeholder="Valor"><select id="caixaMotivo"><option>Entrada</option><option>Saída</option><option>Sangria</option><option>Troco</option></select></div><div style="display:flex;gap:6px"><button class="btn" onclick="caixaEntrada()">+ Entrada</button><button class="btn btn-red" onclick="caixaSaida()">- Saída</button></div><div id="caixaHist"></div></div>
+<div id="aba-relatorios" class="aba"><h2>📈 Relatórios</h2><div id="relatorioVendas" class="totalBox"></div><button class="btn" onclick="gerarRelatorio()">Atualizar Relatório</button><button class="btn btn-ghost" onclick="exportarRelatorioPDF()">Exportar PDF (print)</button></div>
+<div id="aba-cancelados" class="aba"><h2>❌ Vendas Canceladas</h2><div id="listaCancelados"></div></div>
+<div id="aba-sync" class="aba"><h2>🔄 Backup e Sync</h2><button class="btn" onclick="exportarDados()">📤 Exportar Backup JSON</button><input type="file" id="fileImport" style="margin-top:10px"><button class="btn btn-ghost" onclick="importarDados()">📥 Importar Backup</button><div style="margin-top:12px;font-size:12px;opacity:.6">Seu dados ficam salvos no celular mesmo sem internet</div></div>
+<div id="aba-senhas" class="aba"><h2>🔑 Trocar Senha</h2><input id="oldPass" type="password" placeholder="Senha atual"><input id="newPass" type="password" placeholder="Nova senha"><button class="btn" onclick="trocarSenha()">Salvar Nova Senha</button></div>
+<div id="aba-admin" class="aba"><h2>⚙️ Admin - V30 Restaurado</h2><div class="totalBox"><p>Versão V30 PWA - Menu Completo Restaurado - 06/10/2026</p><p id="pwaStatus2" style="font-size:12px;margin-top:8px"></p><p style="font-size:12px;margin-top:8px">✅ Produtos salvos: <span id="infoProd">0</span></p><p style="font-size:12px">✅ Vendas: <span id="infoVenda">0</span></p></div><button class="btn btn-red" onclick="limparTudo()">⚠️ Apagar TODOS os dados (cuidado)</button></div>
+</div>
+
+<div id="modalRecibo" class="modal"><div><h3>✅ Venda Finalizada com sucesso!</h3><div id="reciboTexto" style="margin:14px 0"></div><button class="btn" onclick="fecharRecibo()">Fechar e Nova Venda</button></div></div>
+
+<div id="teclado">
+<button onclick="tecla('7')">7</button><button onclick="tecla('8')">8</button><button onclick="tecla('9')">9</button><button class="op" onclick="addCarrinhoRapido()">+PROD</button>
+<button onclick="tecla('4')">4</button><button onclick="tecla('5')">5</button><button onclick="tecla('6')">6</button><button class="op" onclick="tecla('C')">C</button>
+<button onclick="tecla('1')">1</button><button onclick="tecla('2')">2</button><button onclick="tecla('3')">3</button><button class="op" style="background:#f59e0b;color:#000" onclick="finalizarVenda('dinheiro')">💵</button>
+<button onclick="tecla('0')">0</button><button onclick="tecla('00')">00</button><button onclick="tecla('.')">.</button><button class="op" style="background:#22c55e;color:#000" onclick="finalizarVenda('pix')">PIX</button>
+</div>
+
 <script>
 let deferredPrompt=null;
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('pwaStatus').innerHTML='✅ PWA pronto para instalar!'});
-function instalarApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{deferredPrompt=null})}else{alert('Se já criou manifest.json e sw.js: feche o Chrome total, espera 3 min e abre de novo. Depois 3 pontinhos > Instalar app');}}
-let produtos=JSON.parse(localStorage.getItem('taki_produtos')||'[{"id":1,"nome":"Coxinha congelada","preco":5.5,"estoque":100},{"id":2,"nome":"Kibe","preco":6,"estoque":50},{"id":3,"nome":"Pastel","preco":7,"estoque":80}]');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;const s=document.getElementById('pwaStatus');if(s)s.innerHTML='✅ Pronto pra instalar! Clique no botão amarelo';const s2=document.getElementById('pwaStatus2');if(s2)s2.innerHTML='✅ PWA liberado!';});
+function instalarApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{deferredPrompt=null;if(r.outcome==='accepted'){btnInstall.style.display='none'}})}else{alert('Para instalar: 1) Feche o Chrome totalmente 2) Abra de novo o link 3) Clique nos 3 pontinhos > Instalar app / Adicionar à tela inicial. Se já instalou, o botão some!');}}
+let produtos=JSON.parse(localStorage.getItem('taki_produtos')||'[{"id":1,"nome":"Coxinha congelada","preco":5.5,"custo":2.5,"estoque":100,"codigo":"001"},{"id":2,"nome":"Kibe congelado","preco":6,"custo":3,"estoque":50,"codigo":"002"},{"id":3,"nome":"Pastel congelado","preco":7,"custo":3.5,"estoque":80,"codigo":"003"},{"id":4,"nome":"Bolinha de queijo","preco":5,"custo":2,"estoque":120,"codigo":"004"}]');
 let carrinho=[];let vendas=JSON.parse(localStorage.getItem('taki_vendas')||'[]');let caixa=JSON.parse(localStorage.getItem('taki_caixa')||'{"saldo":0,"hist":[]}');
-function doLogin(){if(user.value==='admin'&&pass.value===(localStorage.getItem('taki_senha')||'1234')){login.style.display='none';app.style.display='block';renderProds();renderCarrinho();updateCaixa();}else alert('Senha errada')}
+function doLogin(){if(user.value==='admin'&&pass.value===(localStorage.getItem('taki_senha')||'1234')){login.style.display='none';app.style.display='block';renderProds();renderCarrinho();updateCaixa();renderAdminProds();}else alert('Senha errada')}
 function logout(){login.style.display='block';app.style.display='none'}
-function showAba(n){document.querySelectorAll('.aba').forEach(a=>{a.classList.remove('ativa');a.classList.add('hidden')});let el=document.getElementById('aba-'+n);el.classList.remove('hidden');el.classList.add('ativa');document.querySelectorAll('.top button').forEach(b=>b.classList.remove('on'));let bt=document.getElementById('b-'+n);if(bt)bt.classList.add('on');if(n==='produtos')renderAdminProds();if(n==='estoque')renderEstoque();if(n==='clientes')renderClientes();if(n==='fornecedores')renderFornecedores();if(n==='caixa')updateCaixa();if(n==='relatorios')gerarRelatorio();}
-function renderProds(f=''){let l=listaProds;l.innerHTML='';produtos.filter(p=>p.nome.toLowerCase().includes(f.toLowerCase())).forEach(p=>{let d=document.createElement('div');d.className='prod';d.innerHTML=`<b>${p.nome}</b><br>R$ ${p.preco.toFixed(2)}<br>Est:${p.estoque}<br><button onclick="addCarrinho(${p.id})">+ Add</button>`;l.appendChild(d)})}
+function showAba(n){document.querySelectorAll('.aba').forEach(a=>{a.classList.remove('ativa')});document.getElementById('aba-'+n).classList.add('ativa');document.querySelectorAll('.top button').forEach(b=>b.classList.remove('on'));let bt=document.getElementById('b-'+n);if(bt)bt.classList.add('on');if(n==='produtos')renderAdminProds();if(n==='estoque')renderEstoque();if(n==='clientes')renderClientes();if(n==='fornecedores')renderFornecedores();if(n==='caixa')updateCaixa();if(n==='relatorios')gerarRelatorio();if(n==='cancelados')renderCancelados();if(n==='admin'){infoProd.innerText=produtos.length;infoVenda.innerText=vendas.length;}}
+function renderProds(f=''){let l=listaProds;l.innerHTML='';let lista=produtos.filter(p=>p.nome.toLowerCase().includes(f.toLowerCase())||(p.codigo||'').includes(f));if(lista.length===0){l.innerHTML='<p style="opacity:.5">Nenhum produto</p>';return}lista.forEach(p=>{let d=document.createElement('div');d.className='prod';d.innerHTML=`<div style="font-size:24px">🥟</div><b>${p.nome}</b><div class="preco">R$ ${p.preco.toFixed(2)}</div><div style="font-size:11px;opacity:.6">Est: ${p.estoque} | ${p.codigo||''}</div><button class="btn" onclick="addCarrinho(${p.id})">+ Adicionar</button>`;l.appendChild(d)})}
 function filtrarProds(){renderProds(buscaProd.value)}
-function addCarrinho(id){let p=produtos.find(x=>x.id===id);let c=carrinho.find(x=>x.id===id);if(c)c.qtd++;else carrinho.push({...p,qtd:1});renderCarrinho()}
-function renderCarrinho(){carrinhoDiv=document.getElementById('carrinho');carrinhoDiv.innerHTML='';let tot=0;carrinho.forEach((it,i)=>{tot+=it.preco*it.qtd;carrinhoDiv.innerHTML+=`${it.nome} x${it.qtd} - R$ ${(it.preco*it.qtd).toFixed(2)} <button onclick="remCarrinho(${i})" style="width:auto;padding:2px 8px;background:#ef4444">x</button><br>`});total.innerText=tot.toFixed(2).replace('.',',')}
+function addCarrinho(id){let p=produtos.find(x=>x.id===id);if(!p)return;if(p.estoque<=0)return alert('Sem estoque');let c=carrinho.find(x=>x.id===id);if(c)c.qtd++;else carrinho.push({...p,qtd:1});renderCarrinho()}
+function addCarrinhoRapido(){let code=prompt('Digite código ou nome:');if(!code)return;let p=produtos.find(x=>(x.codigo||'')===code||x.nome.toLowerCase().includes(code.toLowerCase()));if(p)addCarrinho(p.id);else alert('Produto não encontrado')}
+function renderCarrinho(){let d=carrinho;d=document.getElementById('carrinho');d.innerHTML='';let tot=0,q=0;carrinho.forEach((it,i)=>{tot+=it.preco*it.qtd;q+=it.qtd;d.innerHTML+=`<div class="carrinhoItem"><div><b>${it.nome}</b><br><small>R$ ${it.preco.toFixed(2)} x ${it.qtd}</small></div><div><b>R$ ${(it.preco*it.qtd).toFixed(2)}</b> <span onclick="remCarrinho(${i})" style="color:#ef4444;cursor:pointer;margin-left:8px">❌</span></div></div>`});document.getElementById('total').innerText=tot.toFixed(2).replace('.',',');document.getElementById('qtdItens').innerText=q;}
 function remCarrinho(i){carrinho.splice(i,1);renderCarrinho()}
-function finalizarVenda(tipo){if(carrinho.length===0)return alert('Carrinho vazio');let tot=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);let venda={id:Date.now(),itens:[...carrinho],total:tot,tipo,hora:new Date().toLocaleString()};vendas.push(venda);localStorage.setItem('taki_vendas',JSON.stringify(vendas));caixa.saldo+=tot;caixa.hist.push({tipo:'venda '+tipo,valor:tot,hora:venda.hora});localStorage.setItem('taki_caixa',JSON.stringify(caixa));carrinho.forEach(it=>{let p=produtos.find(x=>x.id===it.id);if(p)p.estoque-=it.qtd});localStorage.setItem('taki_produtos',JSON.stringify(produtos));reciboTexto.innerHTML=`Total R$ ${tot.toFixed(2)}<br>${tipo}<br>${venda.hora}`;modalRecibo.classList.add('open');carrinho=[];renderCarrinho();renderProds();updateCaixa();}
-function cancelarVenda(){carrinho=[];renderCarrinho()}
+function finalizarVenda(tipo){if(carrinho.length===0)return alert('Carrinho vazio');let tot=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);let venda={id:Date.now(),itens:[...carrinho],total:tot,tipo,hora:new Date().toLocaleString()};vendas.push(venda);localStorage.setItem('taki_vendas',JSON.stringify(vendas));caixa.saldo+=tot;caixa.hist.push({tipo:'venda '+tipo,valor:tot,hora:venda.hora});localStorage.setItem('taki_caixa',JSON.stringify(caixa));carrinho.forEach(it=>{let p=produtos.find(x=>x.id===it.id);if(p)p.estoque-=it.qtd});localStorage.setItem('taki_produtos',JSON.stringify(produtos));reciboTexto.innerHTML=`<div class="totalBox"><div>Total: <b>R$ ${tot.toFixed(2)}</b></div><div>Pagamento: ${tipo}</div><div>${venda.hora}</div><br>${venda.itens.map(i=>`${i.nome} x${i.qtd}<br>`).join('')}</div>`;modalRecibo.classList.add('open');carrinho=[];renderCarrinho();renderProds();updateCaixa();}
+function cancelarVenda(){if(confirm('Limpar carrinho?')){carrinho=[];renderCarrinho()}}
 function fecharRecibo(){modalRecibo.classList.remove('open')}
-function salvarEmpresa(){localStorage.setItem('taki_empresa',JSON.stringify({nome:empNome.value}));alert('Salvo')}
-function addProduto(){let nome=pNome.value;let preco=parseFloat(pPreco.value);let est=parseInt(pEstoque.value);if(!nome||!preco)return;produtos.push({id:Date.now(),nome,preco,estoque:est||0});localStorage.setItem('taki_produtos',JSON.stringify(produtos));pNome.value='';pPreco.value='';pEstoque.value='';renderAdminProds();renderProds()}
-function renderAdminProds(){let l=listaProdutosAdmin;if(!l)return;l.innerHTML='';produtos.forEach(p=>{l.innerHTML+=`<div class="prod">${p.nome} - R$${p.preco} Est:${p.estoque} <button onclick="delProd(${p.id})" style="width:auto;background:#ef4444">Del</button></div>`})}
-function delProd(id){produtos=produtos.filter(p=>p.id!==id);localStorage.setItem('taki_produtos',JSON.stringify(produtos));renderAdminProds();renderProds()}
-function renderEstoque(){estoqueLista.innerHTML=produtos.map(p=>`${p.nome}: ${p.estoque}<br>`).join('')}
-let clientes=JSON.parse(localStorage.getItem('taki_clientes')||'[]');function addCliente(){clientes.push({nome:cNome.value,tel:cTel.value});localStorage.setItem('taki_clientes',JSON.stringify(clientes));renderClientes()}function renderClientes(){listaClientes.innerHTML=clientes.map(c=>`${c.nome} - ${c.tel}<br>`).join('')}
-let fornecedores=JSON.parse(localStorage.getItem('taki_fornecedores')||'[]');function addFornecedor(){fornecedores.push({nome:fNome.value});localStorage.setItem('taki_fornecedores',JSON.stringify(fornecedores));renderFornecedores()}function renderFornecedores(){listaFornecedores.innerHTML=fornecedores.map(f=>`${f.nome}<br>`).join('')}
-function calcBalanca(){let peso=parseFloat(bPeso.value||0);let tot=peso*5.5;bResult.innerHTML=`R$ ${tot.toFixed(2)}`}
-function updateCaixa(){caixaSaldo.innerText=caixa.saldo.toFixed(2).replace('.',',');caixaHist.innerHTML=caixa.hist.slice(-20).reverse().map(x=>`${x.hora} - ${x.tipo} R$${x.valor}<br>`).join('')}
-function caixaEntrada(){let v=parseFloat(caixaValor.value||0);caixa.saldo+=v;caixa.hist.push({tipo:'entrada',valor:v,hora:new Date().toLocaleString()});localStorage.setItem('taki_caixa',JSON.stringify(caixa));updateCaixa()}
-function caixaSaida(){let v=parseFloat(caixaValor.value||0);caixa.saldo-=v;caixa.hist.push({tipo:'saida',valor:v,hora:new Date().toLocaleString()});localStorage.setItem('taki_caixa',JSON.stringify(caixa));updateCaixa()}
-function gerarRelatorio(){let tot=vendas.reduce((s,v)=>s+v.total,0);relatorioVendas.innerHTML=`Vendas: ${vendas.length}<br>Total: R$${tot.toFixed(2)}<br><br>`+vendas.slice(-20).map(v=>`${v.hora} - R$${v.total} - ${v.tipo}<br>`).join('')}
-function exportarDados(){let dados={produtos,vendas,caixa};let blob=new Blob([JSON.stringify(dados)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='taki-backup.json';a.click()}
-function importarDados(){let f=fileImport.files[0];if(!f)return;let r=new FileReader();r.onload=e=>{let d=JSON.parse(e.target.result);if(d.produtos){produtos=d.produtos;localStorage.setItem('taki_produtos',JSON.stringify(produtos))}alert('Importado')};r.readAsText(f)}
-function trocarSenha(){if(oldPass.value===(localStorage.getItem('taki_senha')||'1234')){localStorage.setItem('taki_senha',newPass.value);alert('Trocada')}else alert('Senha atual errada')}
-function limparTudo(){if(confirm('Limpar TUDO?')){localStorage.clear();location.reload()}}
-function tecla(v){let el=document.activeElement;if(el&&el.tagName==='INPUT'){if(v==='C')el.value='';else el.value+=v;el.dispatchEvent(new Event('input'))}}
-setInterval(()=>{hora.innerText=new Date().toLocaleString()},1000);
-if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>{pwaStatus.innerHTML+='<br>✅ Service Worker OK';}).catch(e=>{pwaStatus.innerHTML='❌ SW: '+e});}
+function salvarEmpresa(){localStorage.setItem('taki_empresa',JSON.stringify({nome:empNome.value,cnpj:empCnpj.value,tel:empTel.value,end:empEnd.value}));alert('Empresa salva!')}
+function addProduto(){let nome=pNome.value.trim();let preco=parseFloat(pPreco.value);let custo=parseFloat(pCusto.value)||0;let est=parseInt(pEstoque.value)||0;let codigo=pCodigo.value||Date.now().toString().slice(-4);if(!nome||!preco){alert('Nome e preço obrigatório');return}produtos.push({id:Date.now(),nome,preco,custo,estoque:est,codigo});localStorage.setItem('taki_produtos',JSON.stringify(produtos));pNome.value='';pPreco.value='';pCusto.value='';pEstoque.value='';pCodigo.value='';renderAdminProds();renderProds();alert('Produto adicionado!')}
+function renderAdminProds(){let l=listaProdutosAdmin;if(!l)return;l.innerHTML='';produtos.slice().reverse().forEach(p=>{l.innerHTML+=`<div class="carrinhoItem"><div><b>${p.nome}</b><br><small>R$ ${p.preco.toFixed(2)} | Custo R$ ${(p.custo||0).toFixed(2)} | Est ${p.estoque} | ${p.codigo}</small></div><div><button onclick="delProd(${p.id})" style="width:auto;padding:6px 10px;background:#ef4444;color:#fff;border-radius:8px;border:none">Excluir</button></div></div>`})}
+function delProd(id){if(!confirm('Excluir produto?'))return;produtos=produtos.filter(p=>p.id!==id);localStorage.setItem('taki_produtos',JSON.stringify(produtos));renderAdminProds();renderProds()}
+function renderEstoque(){let l=estoqueLista;l.innerHTML='<table><tr><th>Produto</th><th>Estoque</th><th>Status</th></tr>'+produtos.map(p=>`<tr><td>${p.nome}</td><td>${p.estoque}</td><td>${p.estoque<10?'<span style="color:#ef4444">Baixo!</span>':'<span style="color:#22c55e">OK</span>'}</td></tr>`).join('')+'</table>'}
+function filtrarEstoque(v){let l=estoqueLista;let f=produtos.filter(p=>p.nome.toLowerCase().includes(v.toLowerCase()));l.innerHTML='<table><tr><th>Produto</th><th>Estoque</th></tr>'+f.map(p=>`<tr><td>${p.nome}</td><td>${p.estoque}</td></tr>`).join('')+'</table>'}
+let clientes=JSON.parse(localStorage.getItem('taki_clientes')||'[]');function addCliente(){if(!cNome.value)return;clientes.push({nome:cNome.value,tel:cTel.value,id:Date.now()});localStorage.setItem('taki_clientes',JSON.stringify(clientes));cNome.value='';cTel.value='';renderClientes()}function renderClientes(){listaClientes.innerHTML=clientes.map(c=>`<div class="carrinhoItem"><div>${c.nome} - ${c.tel}</div></div>`).join('')}
+let fornecedores=JSON.parse(localStorage.getItem('taki_fornecedores')||'[]');function addFornecedor(){if(!fNome.value)return;fornecedores.push({nome:fNome.value,id:Date.now()});localStorage.setItem('taki_fornecedores',JSON.stringify(fornecedores));fNome.value='';renderFornecedores()}function renderFornecedores(){listaFornecedores.innerHTML=fornecedores.map(f=>`<div class="carrinhoItem">${f.nome}</div>`).join('')}
+function calcBalanca(){let peso=parseFloat(bPeso.value||0);let pKg=parseFloat(bPrecoKg.value||0);let tot=peso*pKg;bResult.innerHTML=`<div>Peso: ${peso}kg</div><div>Preço KG: R$ ${pKg.toFixed(2)}</div><div class="total">Total: R$ ${tot.toFixed(2)}</div>`}
+function updateCaixa(){caixaSaldo.innerText=caixa.saldo.toFixed(2).replace('.',',');caixaHist.innerHTML=caixa.hist.slice(-30).reverse().map(x=>`<div class="carrinhoItem"><div>${x.hora} - ${x.tipo}</div><div>R$ ${x.valor.toFixed(2)}</div></div>`).join('')}
+function caixaEntrada(){let v=parseFloat(caixaValor.value||0);if(!v)return;caixa.saldo+=v;caixa.hist.push({tipo:caixaMotivo.value||'entrada',valor:v,hora:new Date().toLocaleString()});localStorage.setItem('taki_caixa',JSON.stringify(caixa));caixaValor.value='';updateCaixa()}
+function caixaSaida(){let v=parseFloat(caixaValor.value||0);if(!v)return;caixa.saldo-=v;caixa.hist.push({tipo:caixaMotivo.value||'saida',valor:v,hora:new Date().toLocaleString()});localStorage.setItem('taki_caixa',JSON.stringify(caixa));caixaValor.value='';updateCaixa()}
+function gerarRelatorio(){let tot=vendas.reduce((s,v)=>s+v.total,0);let porTipo={};vendas.forEach(v=>{porTipo[v.tipo]=(porTipo[v.tipo]||0)+v.total});relatorioVendas.innerHTML=`<div>Total vendas: ${vendas.length}</div><div class="total">R$ ${tot.toFixed(2)}</div><div style="margin-top:8px">${Object.entries(porTipo).map(([k,v])=>`${k}: R$ ${v.toFixed(2)}<br>`).join('')}</div><hr style="margin:10px 0;border-color:#334155"><div>${vendas.slice(-30).reverse().map(v=>`${v.hora} - R$ ${v.total.toFixed(2)} - ${v.tipo}<br>`).join('')}</div>`}
+function exportarRelatorioPDF(){window.print()}
+function renderCancelados(){listaCancelados.innerHTML='<p style="opacity:.5">Nenhuma venda cancelada</p>'}
+function exportarDados(){let dados={produtos,vendas,caixa,clientes,fornecedores,empresa:JSON.parse(localStorage.getItem('taki_empresa')||'{}')};let blob=new Blob([JSON.stringify(dados)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='taki-backup-'+new Date().toISOString().slice(0,10)+'.json';a.click()}
+function importarDados(){let f=fileImport.files[0];if(!f)return alert('Escolha arquivo');let r=new FileReader();r.onload=e=>{try{let d=JSON.parse(e.target.result);if(d.produtos){produtos=d.produtos;localStorage.setItem('taki_produtos',JSON.stringify(produtos))}if(d.vendas){vendas=d.vendas;localStorage.setItem('taki_vendas',JSON.stringify(vendas))}if(d.caixa){caixa=d.caixa;localStorage.setItem('taki_caixa',JSON.stringify(caixa))}alert('Importado com sucesso!');location.reload()}catch(err){alert('Erro no arquivo')}};r.readAsText(f)}
+function trocarSenha(){if(oldPass.value===(localStorage.getItem('taki_senha')||'1234')){localStorage.setItem('taki_senha',newPass.value);alert('Senha trocada!');oldPass.value='';newPass.value='';}else alert('Senha atual errada')}
+function limparTudo(){if(confirm('⚠️ APAGAR TUDO MESMO? Essa ação não tem volta!')){localStorage.clear();location.reload()}}
+function tecla(v){let el=document.activeElement;if(el&&el.tagName==='INPUT'){if(v==='C')el.value='';else el.value+=v;el.dispatchEvent(new Event('input'));if(el.id==='buscaProd')filtrarProds()}}
+setInterval(()=>{hora.innerText=new Date().toLocaleString('pt-BR')},1000);
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').then(()=>{pwaStatus.innerHTML+=' | ✅ SW OK';pwaStatus2.innerText='✅ Service Worker ativo - App instalável';}).catch(()=>{pwaStatus.innerHTML='❌ Erro SW'});}
 </script>
 </body>
 </html>
