@@ -1,14 +1,17 @@
 {
-  "name": "Venda no Ponto PRO",
-  "short_name": "VendaPonto",
-  "description": "PDV Offline com Caixa, Estoque, Clientes e Relatorios PDF",
-  "start_url": "./index.html",
+  "name": "TAKI VENDAS PRO",
+  "short_name": "TAKI PRO",
+  "description": "Sistema PDV completo - Mercado Taki Caraguatatuba",
+  "start_url": "./",
   "display": "standalone",
-  "background_color": "#174ea6",
-  "theme_color": "#174ea6",
-  "icons": [{
-    "src": "https://cdn-icons-png.flaticon.com/512/869/869636.png",
-    "sizes": "512x512",
-    "type": "image/png"
-  }]
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/869/869636.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }
