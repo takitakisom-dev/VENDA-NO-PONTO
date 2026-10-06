@@ -1,90 +1,143 @@
-<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Venda 13.1 Mercado</title><meta name="theme-color" content="#174ea6"><link id="manifestLink" rel="manifest" href=""><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Venda no Ponto PRO 15.0 MULTI</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
-body{background:#f0f4f8;padding:0}
-.header{background:#174ea6;color:#fff;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20}
-.menu-btn{font-size:22px;background:#ffffff22;border:0;color:#fff;padding:6px 10px;border-radius:8px;cursor:pointer}
-.sidebar{position:fixed;left:-280px;top:0;width:270px;height:100%;background:#fff;z-index:50;transition:.3s;box-shadow:4px 0 20px rgba(0,0,0,.2);overflow:auto}
-.sidebar.open{left:0}
-.sidebar-header{background:#174ea6;color:#fff;padding:18px 16px}
-.menu-item{padding:14px 16px;display:flex;gap:12px;align-items:center;cursor:pointer;border-bottom:1px solid #f1f5f9;font-weight:700;font-size:13px;color:#334155}
-.menu-item.active{background:#174ea6;color:#fff}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;z-index:40}.overlay.show{display:block}
-.main{padding:8px}
-.card{background:#fff;border-radius:14px;padding:14px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:10px}
-.input{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:8px;margin:4px 0}
-.btn{background:#174ea6;color:#fff;border:0;padding:9px 13px;border-radius:8px;cursor:pointer;font-weight:700}
-.btn-final{width:100%;padding:14px;border-radius:12px;border:0;font-size:15px;font-weight:800;cursor:pointer;background:#174ea6;color:#fff}
-.btn-sec{width:100%;padding:11px;border-radius:10px;border:1px solid #174ea6;background:#fff;color:#174ea6;margin-top:6px;font-weight:700;cursor:pointer}
-.btn-zap{background:#25D366;color:#fff;width:100%;padding:12px;border-radius:10px;border:0;font-weight:800;margin-top:6px;cursor:pointer}
-.btn-pdf{background:#111827;color:#fff;width:100%;padding:12px;border-radius:10px;border:0;font-weight:800;margin-top:6px;cursor:pointer}
-.install-btn{background:#f59e0b;color:#000;width:100%;padding:12px;border-radius:10px;border:0;font-weight:900;margin:10px 0;display:none;cursor:pointer}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:60;padding:12px}
-.modal-box{background:#fff;width:100%;max-width:440px;border-radius:16px;padding:18px;max-height:92vh;overflow:auto}
-.pay-opt{padding:12px;border:2px solid #e2e8f0;border-radius:10px;margin:6px 0;cursor:pointer;font-weight:600}
-.pay-opt.active{border-color:#174ea6;background:#eef4ff}
-.hide{display:none}
-table{width:100%;border-collapse:collapse;font-size:11px}th,td{padding:7px;border-bottom:1px solid #e2e8f0;text-align:left}
-.login-screen{position:fixed;inset:0;background:#174ea6;display:flex;align-items:center;justify-content:center;z-index:100;padding:20px}
-.login-box{background:#fff;padding:22px;border-radius:16px;width:100%;max-width:360px;text-align:center}
-.recibo{font-family:'Courier New',monospace;background:#fff;border:2px dashed #111827;padding:14px;border-radius:4px;font-size:11px;white-space:pre-wrap;color:#000}
-.produto-item{display:flex;justify-content:space-between;align-items:center;padding:11px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:7px;background:#fff}
-.container{display:grid;grid-template-columns:1fr 370px;gap:10px}@media(max-width:900px){.container{grid-template-columns:1fr}}
-</style></head><body>
-<div id="loginScreen" class="login-screen"><div class="login-box"><h2>🏪 Venda MASTER</h2><select id="loginUser" class="input"><option>MASTER</option><option>Operador</option></select><input id="loginPass" class="input" type="password" placeholder="Senha (master123 / 1234)"><button class="btn-final" style="margin-top:10px" onclick="fazerLogin()">🔓 Entrar</button></div></div>
-<div class="header"><div style="display:flex;align-items:center;gap:10px"><button class="menu-btn" onclick="toggleMenu()">☰</button><b id="nomeEmpresaHeader">Minha Loja</b></div><div style="display:flex;gap:6px"><span id="statusCaixa" style="background:rgba(255,255,255,.25);padding:4px 10px;border-radius:12px;font-size:11px">🔴 Fechado</span><span id="userLogado" style="background:#fff;color:#174ea6;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:800"></span></div></div>
-<div class="sidebar" id="sidebar"><div class="sidebar-header"><b id="sideEmpresaNome">🏪 Minha Loja</b><br><small>PDV Offline + Balança</small><button id="btnInstalar" class="install-btn" onclick="instalarApp()">⬇️ INSTALAR APP - FUNCIONA OFFLINE</button><div style="display:flex;gap:4px;margin-top:8px"><button class="btn" style="background:#fff;color:#174ea6;font-size:11px" onclick="abrirCaixaModal();closeMenu()">💰 Abrir Caixa</button><button class="btn" style="background:#ffffff33;color:#fff;font-size:11px" onclick="fecharCaixa()">🔒 Fechar</button></div></div>
-<div class="menu-item active" onclick="trocarTela('pdv')">🛒 PDV / Venda</div><div class="menu-item" onclick="trocarTela('cadprod')">📦 Cadastro (KG/UN) Horti/Açougue</div><div class="menu-item" onclick="trocarTela('estoque')">📊 Estoque</div><div class="menu-item" onclick="trocarTela('clientes')">👥 Clientes</div><div class="menu-item" onclick="trocarTela('empresa')">🏢 Empresa</div><div class="menu-item" onclick="trocarTela('relatorios')">📈 Vendas</div><div style="padding:12px;font-size:10px;color:#94a3b8">Versão 13.1 Código Único<br>Offline OK + Balança KG<br>Toledo / Filizola compatível</div></div><div class="overlay" id="overlay" onclick="closeMenu()"></div>
-<div class="main">
-<div id="tab-pdv"><div class="container"><div><div class="card"><h3>📦 Produtos - HortiFruti / Açougue</h3><input id="busca" class="input" placeholder="🔍 Buscar ou bipar etiqueta balança (2 + codigo + peso)" oninput="verificaEtiqueta(this.value);renderProd()"><small style="color:#64748b">Ex: Banana KG - Alcatra KG - Bipa etiqueta que já vai</small><div id="listaProdutos" style="margin-top:8px"></div></div></div><div><div class="card"><h3>🛒 Venda <span id="qtd" style="background:#174ea6;color:#fff;padding:2px 8px;border-radius:12px">0</span></h3><div id="carrinho" style="min-height:80px;margin-top:8px;border:1px dashed #cbd5e1;border-radius:10px;padding:8px"><small style="color:#94a3b8">Vazio - adicione produtos</small></div><div style="text-align:right;font-size:26px;font-weight:900;color:#174ea6;margin:12px 0">TOTAL <span id="total">R$ 0,00</span></div><button class="btn-final" onclick="abrirModalPag()">✓ FINALIZAR VENDA</button><button class="btn-sec" onclick="limpar()">🗑️ Limpar</button><div id="areaComprovante" style="display:none;margin-top:12px"><div class="recibo" id="textoNota"></div><button class="btn-pdf" onclick="gerarComprovantePDF()">📄 COMPROVANTE - Salvar PDF</button><button class="btn-zap" onclick="enviarZap()">📲 Enviar Zap</button></div></div></div></div></div>
-<div id="tab-cadprod" class="hide"><div class="card"><h3>📦 Cadastro Hortifruti / Açougue</h3><input id="cpNome" class="input" placeholder="Nome ex: Banana Nanica, Alcatra com Maminha"><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><input id="cpCod" class="input" placeholder="Código Balança (ex: 1,2,3)"><select id="cpTipo" class="input"><option value="UN">UNIDADE (UN) - Lata, Pacote</option><option value="KG">QUILO (KG) - Balança Horti/Açougue</option></select></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px"><input id="cpCusto" class="input" type="number" step="0.01" placeholder="Custo"><input id="cpVenda" class="input" type="number" step="0.01" placeholder="Venda por KG/UN *"><input id="cpEst" class="input" type="number" step="0.001" placeholder="Estoque KG/UN"></div><button class="btn-final" onclick="addProduto()">💾 Cadastrar Produto</button><table style="margin-top:12px"><thead><tr><th>Tipo</th><th>Código</th><th>Nome</th><th>Preço</th><th>Est</th><th></th></tr></thead><tbody id="tabCadProdBody"></tbody></table></div></div>
-<div id="tab-estoque" class="hide"><div class="card"><h3>📊 Estoque</h3><table><thead><tr><th>Nome</th><th>Tipo</th><th>Preço</th><th>Est</th></tr></thead><tbody id="tabEstoqueBody"></tbody></table></div></div>
-<div id="tab-clientes" class="hide"><div class="card"><h3>👥 Clientes</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:5px"><input id="cNome" class="input" placeholder="Nome"><input id="cFone" class="input" placeholder="Zap"></div><button class="btn-final" onclick="addCliente()">Salvar</button><table style="margin-top:10px"><thead><tr><th>Nome</th><th></th></tr></thead><tbody id="tabCliBody"></tbody></table></div></div>
-<div id="tab-empresa" class="hide"><div class="card"><h3>🏢 Empresa</h3><input id="empFantasia" class="input" placeholder="Nome Fantasia"><input id="empCNPJ" class="input" placeholder="CNPJ/CPF"><input id="empEnd" class="input" placeholder="Endereço"><input id="empZap" class="input" placeholder="Zap"><button class="btn-final" onclick="saveEmpresa()">💾 Salvar</button></div></div>
-<div id="tab-relatorios" class="hide"><div class="card"><h3>📈 Vendas</h3><div><small>Abertura</small> <b id="rAbertura">R$ 0</b> | <small>Vendas</small> <b id="rVendas">R$ 0</b></div><table style="margin-top:10px"><thead><tr><th>Hora</th><th>Total</th></tr></thead><tbody id="tabVendasBody"></tbody></table></div></div>
+*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f1f5f9;padding:8px}
+.top{background:#174ea6;color:#fff;border-radius:16px;padding:12px}
+.btn{border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;background:#fff;color:#174ea6;margin-right:6px}
+.tab{padding:10px 18px;border-radius:20px;border:1px solid #cbd5e1;background:#fff;font-weight:700;margin-right:6px}
+.tab.active{background:#174ea6;color:#fff}
+.card{background:#fff;border-radius:16px;padding:14px;margin:10px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.prod{display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;border-radius:12px;padding:10px;margin:8px 0}
+.add{background:#174ea6;color:#fff;border:none;width:40px;height:40px;border-radius:10px;font-size:20px}
+.final{background:#174ea6;color:#fff;width:100%;padding:14px;border-radius:12px;border:none;font-size:18px;font-weight:800}
+.badge{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:900;background:#22c55e}
+.live{animation:pulse 1s infinite}@keyframes pulse{0%{opacity:1}50%{opacity:.5}100%{opacity:1}}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:4px 0}
+</style>
+</head>
+<body>
+
+<div id="login" class="card" style="max-width:420px;margin:40px auto;text-align:center">
+<h2>🔥 Venda no Ponto PRO 15.0</h2>
+<p id="fbStatus">Conectando Firebase...</p>
+<input id="lojaId" value="LOJA-CARAGUA-01" style="font-weight:900;text-align:center">
+<select id="caixaId"><option value="ADMIN">👑 ADMIN CENTRAL</option><option value="CAIXA_01">CAIXA 01</option><option value="CAIXA_02">CAIXA 02</option><option value="CAIXA_03">CAIXA 03</option><option value="CAIXA_04">CAIXA 04</option></select>
+<button onclick="entrar()" class="final" style="margin-top:10px">ENTRAR AO VIVO</button>
 </div>
-<div id="modalCaixa" class="modal"><div class="modal-box"><h3>💰 Abrir Caixa</h3><input id="valorAbertura" class="input" type="number" placeholder="Valor R$"><button class="btn-final" onclick="confirmAbrirCaixa()">Abrir</button><button class="btn-sec" onclick="fecharModais()">Cancelar</button></div></div>
-<div id="modalPag" class="modal"><div class="modal-box"><h3>💳 Pagamento</h3><div class="pay-opt active" onclick="selPay(this,'Dinheiro')">💵 Dinheiro</div><div class="pay-opt" onclick="selPay(this,'PIX')">⚡ PIX</div><div class="pay-opt" onclick="selPay(this,'Cartão')">💳 Cartão</div><button class="btn-final" onclick="finalizar()">CONFIRMAR VENDA</button><button class="btn-sec" onclick="fecharModais()">Cancelar</button></div></div>
-<div id="modalBalanca" class="modal"><div class="modal-box"><h3>⚖️ BALANÇA - HortiFruti / Açougue</h3><b id="balancaNome" style="font-size:16px"></b><p>Preço: R$ <span id="balancaPreco"></span> / KG</p><input id="balancaPeso" class="input" type="number" step="0.001" placeholder="Peso em KG ex: 0.350 = 350g" oninput="calcBalanca()"><div style="background:#f0f6ff;padding:12px;border-radius:10px;margin:8px 0;text-align:center"><div style="font-size:12px">TOTAL</div><div style="font-size:22px;font-weight:900;color:#174ea6">R$ <span id="balancaTotal">0.00</span></div><div style="font-size:11px"><span id="balancaPesoShow">0</span> KG x R$ <span id="balancaPreco2"></span></div></div><button class="btn" style="width:100%;background:#111827" onclick="lerBalancaBluetooth()">🔵 Ler Balança Bluetooth Toledo</button><button class="btn-final" style="margin-top:8px" onclick="confirmaBalanca()">✓ Adicionar</button><button class="btn-sec" onclick="fecharModais()">Cancelar</button></div></div>
+
+<div id="app" style="display:none">
+<div class="top">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<b>🏪 Venda no Ponto PRO</b><span style="background:#ffffff33;padding:4px 10px;border-radius:20px;font-size:12px"><span class="live">●</span> <span id="labelCaixa">CAIXA 01</span> - AO VIVO</span>
+</div>
+<div style="margin-top:8px"><button class="btn">Abrir Caixa</button><button class="btn">Fechar</button><button onclick="location.reload()" class="btn">Sair</button></div>
+<div id="adminBar" style="display:none;margin-top:10px;background:#0f172a;padding:10px;border-radius:10px">👑 ADMIN: <b id="fat">R$ 0,00</b> hoje - <span id="qtdVendas">0 vendas</span> - Loja: <span id="labelLoja"></span></div>
+</div>
+
+<div style="display:flex;overflow:auto;padding:8px 0">
+<button class="tab active">🛒 PDV</button><button class="tab">📦 Estoque</button><button class="tab">👥 Clientes</button>
+</div>
+
+<div class="card">
+<h3 style="margin:0 0 8px">Produtos</h3>
+<input placeholder="Buscar..." onkeyup="buscar(this.value)">
+<div id="listaProdutos"></div>
+</div>
+
+<div class="card">
+<h3>🛒 Venda <span id="numVenda">0</span> | <select id="cliente" style="width:120px;display:inline"><option>Avulso</option></select> <span style="float:right" id="sincStatus"></span></h3>
+<div id="carrinho"></div>
+<h2 style="text-align:right;color:#174ea6">TOTAL R$ <span id="total">0.00</span></h2>
+<button class="final" onclick="finalizar()">✓ Finalizar</button>
+<button style="width:100%;margin-top:8px;padding:12px;border-radius:10px;border:1px solid #174ea6;background:#fff;color:#174ea6;font-weight:700" onclick="limpar()">Limpar</button>
+</div>
+
+<div id="painelAdmin" class="card" style="display:none;border:2px solid #22c55e">
+<h3>🔴 Ao Vivo - Todos os Caixas</h3>
+<div id="aoVivo"></div>
+</div>
+</div>
+
 <script>
-// MANIFEST E SW INLINE - CODIGO UNICO
-(function(){
-const manifest={name:"Venda no Ponto Mercado",short_name:"Venda",start_url:"./",display:"standalone",background_color:"#174ea6",theme_color:"#174ea6",icons:[{src:"https://cdn-icons-png.flaticon.com/512/1170/1170678.png",sizes:"192x192",type:"image/png"},{src:"https://cdn-icons-png.flaticon.com/512/1170/1170678.png",sizes:"512x512",type:"image/png"}]};
-const mBlob=new Blob([JSON.stringify(manifest)],{type:"application/json"});document.getElementById('manifestLink').href=URL.createObjectURL(mBlob);
-const swCode=`const CACHE='venda13-unico';self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(['./'])));self.skipWaiting()});self.addEventListener('fetch',e=>{e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).catch(()=>caches.match('./'))))})`;
-const swBlob=new Blob([swCode],{type:"text/javascript"});const swUrl=URL.createObjectURL(swBlob);if('serviceWorker' in navigator){navigator.serviceWorker.register(swUrl);}
-})();
+const firebaseConfig = {
+  apiKey: "AIzaSyCUAnzfTlUeEEN6bXL-rSPWzudobwdEeUI",
+  authDomain: "venda-no-ponto.firebaseapp.com",
+  databaseURL: "https://venda-no-ponto-default-rtdb.firebaseio.com",
+  projectId: "venda-no-ponto",
+  storageBucket: "venda-no-ponto.firebasestorage.app",
+  messagingSenderId: "891438595344",
+  appId: "1:891438595344:web:eac019ede805eb4240f995"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.database();
+let LOJA="",CAIXA="",produtos=[{id:1,nome:"Coca-Cola 350ml",preco:5.00,estoque:20},{id:2,nome:"Pão de Queijo",preco:4.50,estoque:15}],carrinho=[],total=0;
 
-let produtos=JSON.parse(localStorage.getItem('vp13u_prod')||'[{"nome":"Coca 350ml","codigo":"1","tipo":"UN","preco":5,"estoque":20},{"nome":"Banana Nanica","codigo":"2","tipo":"KG","preco":6.5,"estoque":50},{"nome":"Alcatra c/ Maminha","codigo":"3","tipo":"KG","preco":46.9,"estoque":30},{"nome":"Tomate","codigo":"4","tipo":"KG","preco":8.9,"estoque":20}]'),clientes=JSON.parse(localStorage.getItem('vp13u_cli')||'[]'),vendas=JSON.parse(localStorage.getItem('vp13u_vendas')||'[]'),caixa=JSON.parse(localStorage.getItem('vp13u_caixa')||'{"aberto":false,"inicial":0}'),empresa=JSON.parse(localStorage.getItem('vp13u_emp')||'{"fantasia":"Minha Loja","cnpj":"","end":"","zap":""}'),carrinho=[],formaPagamento='Dinheiro',ultimaNota='',carrinhoUltimo=[],ultimoTotal=0,ultimoPag='',ultimaHora='',prodBalanca=null,deferredPrompt=null;
+firebase.database().ref(".info/connected").on("value",s=>{
+ document.getElementById("fbStatus").innerHTML=s.val()?"🟢 Firebase AO VIVO conectado!":"🔴 Offline";
+});
 
-function save(){localStorage.setItem('vp13u_prod',JSON.stringify(produtos));localStorage.setItem('vp13u_cli',JSON.stringify(clientes));localStorage.setItem('vp13u_vendas',JSON.stringify(vendas));localStorage.setItem('vp13u_caixa',JSON.stringify(caixa));localStorage.setItem('vp13u_emp',JSON.stringify(empresa));}
-window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;document.getElementById('btnInstalar').style.display='block';});
-function instalarApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then(r=>{if(r.outcome==='accepted'){document.getElementById('btnInstalar').innerText='✅ INSTALADO!';setTimeout(()=>document.getElementById('btnInstalar').style.display='none',2000)}deferredPrompt=null})}else{alert('No Chrome clique nos 3 pontinhos > Instalar app ou Adicionar à tela inicial');}}
-function toggleMenu(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('show');}
-function closeMenu(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show');}
-function trocarTela(id){document.querySelectorAll('[id^=tab-]').forEach(t=>t.classList.add('hide'));document.getElementById('tab-'+id).classList.remove('hide');closeMenu();renderAll();}
-function saveEmpresa(){empresa.fantasia=document.getElementById('empFantasia').value||'Minha Loja';empresa.cnpj=document.getElementById('empCNPJ').value;empresa.end=document.getElementById('empEnd').value;empresa.zap=document.getElementById('empZap').value;save();renderEmpresa();alert('Salvo!');}
-function renderEmpresa(){if(document.getElementById('empFantasia')){document.getElementById('empFantasia').value=empresa.fantasia;document.getElementById('nomeEmpresaHeader').innerText=empresa.fantasia;document.getElementById('sideEmpresaNome').innerText='🏪 '+empresa.fantasia;}}
-function fazerLogin(){let n=document.getElementById('loginUser').value,s=document.getElementById('loginPass').value;if((n==='MASTER'&&s==='master123')||(n==='Operador'&&s==='1234')||s==='master123'||s==='1234'){document.getElementById('loginScreen').style.display='none';document.getElementById('userLogado').innerText=n;caixa.aberto=true;if(!caixa.inicial)caixa.inicial=1;save();renderAll();}else alert('Use MASTER master123');}
-function abrirCaixaModal(){document.getElementById('modalCaixa').style.display='flex';}
-function confirmAbrirCaixa(){caixa.aberto=true;caixa.inicial=parseFloat(document.getElementById('valorAbertura').value)||1;save();fecharModais();renderAll();}
-function fecharCaixa(){caixa.aberto=false;save();renderAll();}
-function fecharModais(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none');}
-function selPay(el,f){document.querySelectorAll('#modalPag.pay-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');formaPagamento=f;}
-function verificaEtiqueta(codigo){codigo=codigo.trim();if(codigo.length>=8&&codigo.startsWith('2')){let parteCod=codigo.substring(1,5);let pesoStr=codigo.substring(7,12);let peso=parseInt(pesoStr);if(!isNaN(peso)){let pesoKg=peso/1000;let prod=produtos.find(p=>p.codigo===parteCod||p.codigo===parseInt(parteCod).toString()||p.codigo===codigo.substring(1,6));if(prod&&pesoKg>0){carrinho.push({nome:prod.nome,preco:Number(prod.preco),qtd:pesoKg,tipo:'KG'});renderCarrinho();document.getElementById('busca').value='';alert(`Etiqueta: ${prod.nome} - ${pesoKg.toFixed(3)}kg - R$ ${(pesoKg*prod.preco).toFixed(2)}`);}}}}
-function renderProd(){let b=(document.getElementById('busca').value||'').toLowerCase();let l=document.getElementById('listaProdutos');l.innerHTML='';produtos.filter(p=>p.nome.toLowerCase().includes(b)||(p.codigo||'').includes(b)).forEach(p=>{let badge=p.tipo==='KG'?`⚖️ KG R$ ${Number(p.preco).toFixed(2)}/kg`:`📦 UN`;l.innerHTML+=`<div class="produto-item"><div><b>${p.nome}</b> <small style="background:${p.tipo==='KG'?'#dcfce7':'#e0e7ff'};padding:2px 6px;border-radius:8px">${badge}</small><br><small>Cód: ${p.codigo} | Est: ${p.estoque}${p.tipo==='KG'?'kg':''}</small></div><button class="btn" onclick="addCarrinho('${p.nome.replace(/'/g,"\\'")}')">+</button></div>`;});}
-function addCarrinho(nome){if(!caixa.aberto){caixa.aberto=true;caixa.inicial=1;save();}let p=produtos.find(x=>x.nome===nome);if(!p||p.estoque<=0)return alert('Sem estoque');if(p.tipo==='KG'){prodBalanca=p;document.getElementById('balancaNome').innerText=p.nome;document.getElementById('balancaPreco').innerText=Number(p.preco).toFixed(2);document.getElementById('balancaPreco2').innerText=Number(p.preco).toFixed(2);document.getElementById('balancaPeso').value='';document.getElementById('balancaTotal').innerText='0.00';document.getElementById('balancaPesoShow').innerText='0';document.getElementById('modalBalanca').style.display='flex';return;}let ex=carrinho.find(c=>c.nome===nome&&c.tipo==='UN');if(ex)ex.qtd++;else carrinho.push({nome:p.nome,preco:Number(p.preco),qtd:1,tipo:'UN'});renderCarrinho();}
-function calcBalanca(){let peso=parseFloat(document.getElementById('balancaPeso').value)||0;if(prodBalanca){document.getElementById('balancaTotal').innerText=(peso*prodBalanca.preco).toFixed(2);document.getElementById('balancaPesoShow').innerText=peso.toFixed(3);}}
-function confirmaBalanca(){let peso=parseFloat(document.getElementById('balancaPeso').value);if(!peso||peso<=0)return alert('Digite o peso! Ex: 0.5 para 500g');carrinho.push({nome:prodBalanca.nome,preco:Number(prodBalanca.preco),qtd:peso,tipo:'KG'});fecharModais();renderCarrinho();}
-async function lerBalancaBluetooth(){try{if(!navigator.bluetooth)return alert('Bluetooth não suportado neste navegador. Digite peso manual.');let device=await navigator.bluetooth.requestDevice({acceptAllDevices:true,optionalServices:['weight_scale','battery_service']});alert('Balança conectada! Peso ainda precisa ser digitado manualmente nessa versão. Futuro: leitura automática.');}catch(e){alert('Cancelado ou sem suporte. Digite peso manual.');}}
-function renderCarrinho(){let d=document.getElementById('carrinho');d.innerHTML=carrinho.length?'':'<small style="color:#94a3b8">Vazio - adicione produtos</small>';let tot=0;carrinho.forEach((c,i)=>{let s=c.preco*c.qtd;tot+=s;let label=c.tipo==='KG'?`${c.qtd.toFixed(3)}kg ${c.nome} (R$ ${c.preco.toFixed(2)}/kg)`:`${c.qtd}x ${c.nome}`;d.innerHTML+=`<div style="display:flex;justify-content:space-between;margin:7px 0;font-size:12px"><span>${label}</span><span>R$ ${s.toFixed(2)} <button onclick="carrinho.splice(${i},1);renderCarrinho()" style="border:0;background:#fee2e2;border-radius:6px;padding:2px 7px">x</button></span></div>`});document.getElementById('total').innerText='R$ '+tot.toFixed(2);document.getElementById('qtd').innerText=carrinho.length;document.getElementById('rAbertura').innerText='R$ '+(caixa.inicial||0).toFixed(2);}
-function limpar(){carrinho=[];renderCarrinho();document.getElementById('areaComprovante').style.display='none';}
-function abrirModalPag(){if(!carrinho.length)return alert('Carrinho vazio!');document.getElementById('modalPag').style.display='flex';}
-function finalizar(){if(!carrinho.length)return;let tot=carrinho.reduce((s,c)=>s+c.preco*c.qtd,0);carrinhoUltimo=[...carrinho];ultimoTotal=tot;ultimoPag=formaPagamento;ultimaHora=new Date().toLocaleString('pt-BR');vendas.push({hora:ultimaHora,total:tot});carrinho.forEach(it=>{let p=produtos.find(pr=>pr.nome===it.nome);if(p)p.estoque-=it.qtd;});save();let itens=carrinho.map(c=>{let nome=c.tipo==='KG'?`${c.qtd.toFixed(3)}kg ${c.nome}`:`${c.qtd}x ${c.nome}`;nome=nome.substring(0,26).padEnd(26,' ');let val=('R$ '+(c.preco*c.qtd).toFixed(2)).padStart(10,' ');return nome+val;}).join('\n');ultimaNota=`${empresa.fantasia.toUpperCase()}\n${empresa.cnpj? 'CNPJ:'+empresa.cnpj : ''}\n${empresa.end||''}\n--------------------------------\nCOMPROVANTE\n--------------------------------\nDATA: ${ultimaHora}\n--------------------------------\n${itens}\n--------------------------------\nTOTAL: R$ ${tot.toFixed(2)}\nPAGTO: ${formaPagamento}\n--------------------------------\nOBRIGADO! VOLTE SEMPRE!\n`;document.getElementById('textoNota').innerText=ultimaNota;document.getElementById('areaComprovante').style.display='block';renderAll();fecharModais();carrinho=[];renderCarrinho();window.scrollTo(0,document.body.scrollHeight);}
-function enviarZap(){window.open('https://wa.me/?text='+encodeURIComponent(ultimaNota),'_blank');}
-function gerarComprovantePDF(){if(!carrinhoUltimo.length)return;const {jsPDF}=window.jspdf;let doc=new jsPDF({unit:'mm',format:[80,200]});let y=8;doc.setFont('courier','bold');doc.setFontSize(11);doc.text(empresa.fantasia.toUpperCase().substring(0,30),40,y,{align:'center'});y+=5;doc.setFont('courier','normal');doc.setFontSize(7);doc.text('DATA: '+ultimaHora,4,y);y+=4;doc.text('--------------------------------',4,y);y+=4;carrinhoUltimo.forEach(c=>{let linha=(c.tipo==='KG'?c.qtd.toFixed(3)+'kg ':'')+c.nome.substring(0,22);linha=linha.padEnd(24,' ')+('R$ '+(c.preco*c.qtd).toFixed(2)).padStart(10,' ');doc.text(linha,4,y);y+=4;});y+=2;doc.text('--------------------------------',4,y);y+=5;doc.setFont('courier','bold');doc.setFontSize(10);doc.text('TOTAL R$ '+ultimoTotal.toFixed(2),4,y);doc.save('comprovante.pdf');}
-function addProduto(){let nome=document.getElementById('cpNome').value.trim(),cod=document.getElementById('cpCod').value.trim(),tipo=document.getElementById('cpTipo').value,venda=parseFloat(document.getElementById('cpVenda').value),est=parseFloat(document.getElementById('cpEst').value)||0,custo=parseFloat(document.getElementById('cpCusto').value)||0;if(!nome||!venda)return alert('Nome e preço venda obrigatórios');produtos.push({nome,codigo:cod||Date.now().toString().slice(-4),tipo,preco:venda,custo,estoque:est});save();renderAll();document.getElementById('cpNome').value='';alert('Produto cadastrado! '+tipo);}
-function addCliente(){let n=document.getElementById('cNome').value;if(!n)return;clientes.push({nome:n});save();renderAll();}
-function renderAll(){renderProd();renderCarrinho();renderEmpresa();document.getElementById('statusCaixa').innerText=caixa.aberto?'🟢 R$ '+caixa.inicial.toFixed(2):'🔴 Fechado';document.getElementById('tabCadProdBody').innerHTML=produtos.map((p,i)=>`<tr><td><span style="background:${p.tipo==='KG'?'#dcfce7':'#e0e7ff'};padding:2px 6px;border-radius:8px">${p.tipo}</span></td><td>${p.codigo}</td><td>${p.nome}</td><td>R$ ${Number(p.preco).toFixed(2)}${p.tipo==='KG'?'/kg':''}</td><td>${p.estoque}${p.tipo==='KG'?'kg':''}</td><td><button onclick="produtos.splice(${i},1);save();renderAll()" style="border:0;color:red">🗑️</button></td></tr>`).join('');document.getElementById('tabEstoqueBody').innerHTML=produtos.map(p=>`<tr><td>${p.nome}</td><td>${p.tipo}</td><td>R$ ${Number(p.preco).toFixed(2)}</td><td>${p.estoque}</td></tr>`).join('');document.getElementById('tabCliBody').innerHTML=clientes.map((c,i)=>`<tr><td>${c.nome}</td><td><button onclick="clientes.splice(${i},1);save();renderAll()" style="border:0;color:red">🗑️</button></td></tr>`).join('');let tot=0;document.getElementById('tabVendasBody').innerHTML=vendas.map(v=>{tot+=v.total;return `<tr><td>${v.hora}</td><td>R$ ${v.total.toFixed(2)}</td></tr>`}).join('');document.getElementById('rVendas').innerText='R$ '+tot.toFixed(2);}
-renderAll();
-</script></body></html>
+function entrar(){
+ LOJA=document.getElementById("lojaId").value.toUpperCase();
+ CAIXA=document.getElementById("caixaId").value;
+ document.getElementById("login").style.display="none";
+ document.getElementById("app").style.display="block";
+ document.getElementById("labelCaixa").innerText=CAIXA;
+ document.getElementById("labelLoja").innerText=LOJA;
+ if(CAIXA==="ADMIN"){document.getElementById("adminBar").style.display="block";document.getElementById("painelAdmin").style.display="block";}
+ renderProdutos(); escutar();
+}
+function renderProdutos(filtro=""){
+ const div=document.getElementById("listaProdutos");
+ let lista=produtos.filter(p=>p.nome.toLowerCase().includes(filtro.toLowerCase()));
+ div.innerHTML=lista.map(p=>`<div class="prod"><div><b>${p.nome}</b> <small>(${p.estoque})</small><br><span style="color:#174ea6">R$ ${p.preco.toFixed(2)}</span></div><button class="add" onclick="add(${p.id})">+</button></div>`).join("");
+}
+function buscar(v){renderProdutos(v)}
+function add(id){
+ let p=produtos.find(x=>x.id===id);
+ if(p.estoque<=0){alert("Sem estoque");return}
+ let item=carrinho.find(x=>x.id===id);
+ if(item) item.qtd++; else carrinho.push({...p,qtd:1});
+ p.estoque--; renderProdutos(); renderCarrinho();
+}
+function renderCarrinho(){
+ let div=document.getElementById("carrinho");
+ div.innerHTML=carrinho.map(i=>`<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid #eee"><span>${i.nome} x${i.qtd}</span><span>R$ ${(i.preco*i.qtd).toFixed(2)} <button onclick="rem(${i.id})" style="margin-left:6px">x</button></span></div>`).join("")||"<small style='color:#94a3b8'>Carrinho vazio</small>";
+ total=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);
+ document.getElementById("total").innerText=total.toFixed(2);
+ document.getElementById("numVenda").innerText=carrinho.length;
+}
+function rem(id){
+ let i=carrinho.find(x=>x.id===id); let p=produtos.find(x=>x.id===id);
+ p.estoque+=i.qtd; carrinho=carrinho.filter(x=>x.id!==id); renderProdutos(); renderCarrinho();
+}
+function limpar(){ carrinho.forEach(i=>{let p=produtos.find(x=>x.id===i.id);p.estoque+=i.qtd}); carrinho=[]; renderProdutos(); renderCarrinho(); }
+function finalizar(){
+ if(carrinho.length===0){alert("Carrinho vazio");return}
+ let venda={caixaId:CAIXA,lojaId:LOJA,produtos:carrinho,total:total,cliente:document.getElementById("cliente").value,data:new Date().toISOString(),hora:new Date().toLocaleTimeString("pt-BR"),timestamp:Date.now()};
+ document.getElementById("sincStatus").innerText="⏳ Sincronizando...";
+ db.ref(`lojas/${LOJA}/vendas`).push(venda).then(()=>{
+   document.getElementById("sincStatus").innerText="✅ Ao vivo!";
+   setTimeout(()=>document.getElementById("sincStatus").innerText="",2000);
+   carrinho=[]; renderCarrinho();
+ });
+}
+function escutar(){
+ db.ref(`lojas/${LOJA}/vendas`).orderByChild("timestamp").limitToLast(20).on("value",snap=>{
+   let vendas=[];snap.forEach(c=>vendas.push(c.val()));vendas.reverse();
+   if(CAIXA==="ADMIN"){
+     let hoje=vendas.filter(v=>new Date(v.data).toDateString()===new Date().toDateString());
+     let fat=hoje.reduce((s,v)=>s+v.total,0);
+     document.getElementById("fat").innerText="R$ "+fat.toFixed(2);
+     document.getElementById("qtdVendas").innerText=hoje.length+" vendas";
+     document.getElementById("aoVivo").innerHTML=vendas.map(v=>`<div style="padding:8px;background:#f8fafc;margin:5px 0;border-radius:8px;border-left:4px solid #22c55e"><b>${v.caixaId}</b> - R$ ${v.total.toFixed(2)} às ${v.hora}<br><small>${v.produtos?.map(p=>p.nome+" x"+p.qtd).join(", ")}</small></div>`).join("");
+   }
+ });
+}
+</script>
+</body>
+</html>
