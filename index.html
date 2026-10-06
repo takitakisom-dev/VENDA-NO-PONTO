@@ -3,57 +3,77 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Venda no Ponto</title>
+<title>Venda no Ponto PRO</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#174ea6">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;font-family:system-ui}
 body{background:#f0f4f8;padding:10px}
-.header{background:#174ea6;color:white;padding:15px 20px;border-radius:14px;display:flex;justify-content:space-between;align-items:center}
-.container{display:grid;grid-template-columns:1fr 380px;gap:12px;margin-top:12px}
+.header{background:#174ea6;color:white;padding:14px 18px;border-radius:14px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.tabs{display:flex;gap:8px;margin:12px 0;overflow:auto}
+.tab{padding:10px 16px;background:white;border-radius:20px;border:1px solid #cbd5e1;cursor:pointer;white-space:nowrap;font-weight:600}
+.tab.active{background:#174ea6;color:white}
+.container{display:grid;grid-template-columns:1fr 380px;gap:12px}
 @media(max-width:900px){.container{grid-template-columns:1fr}}
-.card{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
-.search{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:12px 0}
-.produto{display:flex;justify-content:space-between;align-items:center;padding:12px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:8px}
-.btn-add{background:#174ea6;color:white;border:0;width:36px;height:36px;border-radius:8px;font-size:20px}
-.total{font-size:28px;font-weight:800;color:#174ea6;text-align:right;margin:14px 0}
-.btn-final{background:#174ea6;color:white;width:100%;padding:16px;border-radius:12px;border:0;font-size:18px;font-weight:700}
-.btn-sec{width:100%;padding:12px;border-radius:10px;border:1px solid #174ea6;background:white;color:#174ea6;margin-top:8px;font-weight:600}
-.input-prod{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin:4px 0}
+.card{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:12px}
+.search{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:10px;margin:8px 0}
+.produto{display:flex;justify-content:space-between;align-items:center;padding:11px;border:1px solid #e2e8f0;border-radius:12px;margin-bottom:7px}
+.btn{background:#174ea6;color:white;border:0;padding:8px 12px;border-radius:8px;cursor:pointer;font-weight:600}
+.btn-final{background:#174ea6;color:white;width:100%;padding:15px;border-radius:12px;border:0;font-size:17px;font-weight:700;cursor:pointer}
+.btn-sec{width:100%;padding:11px;border-radius:10px;border:1px solid #174ea6;background:white;color:#174ea6;margin-top:7px;font-weight:600;cursor:pointer}
+.input{width:100%;padding:10px;border:1px solid #cbd5e1;border-radius:8px;margin:4px 0}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;z-index:99;padding:12px}
+.modal-box{background:white;width:100%;max-width:420px;border-radius:16px;padding:20px;max-height:90vh;overflow:auto}
+.pay-opt{padding:11px;border:1px solid #e2e8f0;border-radius:10px;margin:6px 0;cursor:pointer;display:flex;justify-content:space-between}
+.pay-opt.active{border-color:#174ea6;background:#eef4ff}
+.hide{display:none}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px;border-bottom:1px solid #e2e8f0;text-align:left}
 </style>
 </head>
 <body>
-<div class="header"><h1>🏪 Venda no Ponto</h1><span id="totalVendasDia"></span></div>
-<div class="container">
-<div class="card">
-<h3>📦 Produtos</h3>
-<input id="busca" class="search" placeholder="Buscar produto..." onkeyup="render()">
-<div id="listaProdutos"></div>
-<hr style="margin:16px 0">
-<h4>+ Cadastrar Produto</h4>
-<input id="nome" class="input-prod" placeholder="Nome ex: Coca 350ml">
-<input id="preco" class="input-prod" type="number" step="0.01" placeholder="Preço ex: 5.00">
-<button onclick="addProduto()" class="btn-sec">Salvar Produto</button>
+<div class="header">
+<div><b>🏪 Venda no Ponto PRO</b> <span id="statusCaixa" style="margin-left:8px;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:12px;font-size:12px">Caixa Fechado</span></div>
+<div style="display:flex;gap:6px"><button class="btn" style="background:white;color:#174ea6" onclick="abrirCaixaModal()">Abrir Caixa</button><button class="btn" style="background:white;color:#174ea6" onclick="fecharCaixa()">Fechar</button></div>
 </div>
-<div class="card">
-<h3>🛒 Carrinho <span id="qtd">0</span></h3>
-<div id="carrinho" style="margin-top:12px;min-height:120px"></div>
-<div class="total">TOTAL: <span id="total">R$ 0,00</span></div>
-<button class="btn-final" onclick="finalizar()">✓ Finalizar Venda</button>
-<button class="btn-sec" onclick="limpar()">Limpar</button>
-<button class="btn-sec" onclick="zap()">📱 Enviar no Zap</button>
+<div class="tabs">
+<div class="tab active" onclick="trocaTab('pdv',this)">🛒 PDV</div>
+<div class="tab" onclick="trocaTab('estoque',this)">📦 Estoque</div>
+<div class="tab" onclick="trocaTab('clientes',this)">👥 Clientes</div>
+<div class="tab" onclick="trocaTab('relatorios',this)">📊 Relatórios PDF</div>
 </div>
-</div>
+<div id="tab-pdv"><div class="container"><div><div class="card"><h3>Produtos</h3><input id="busca" class="search" placeholder="Buscar..." onkeyup="renderProd()"><div id="listaProdutos"></div></div></div><div><div class="card"><h3>🛒 Venda <span id="qtd">0</span> | <select id="clienteVenda"><option value="">Avulso</option></select></h3><div id="carrinho" style="min-height:90px;margin-top:10px"></div><div style="text-align:right;font-size:26px;font-weight:800;color:#174ea6;margin:8px 0">TOTAL <span id="total">R$ 0,00</span></div><button class="btn-final" onclick="abrirModalPag()">✓ Finalizar</button><button class="btn-sec" onclick="limpar()">Limpar</button></div></div></div></div>
+<div id="tab-estoque" class="hide"><div class="card"><h3>📦 Estoque</h3><div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:6px"><input id="pNome" class="input" placeholder="Nome"><input id="pPreco" class="input" type="number" step="0.01" placeholder="Preço"><input id="pEst" class="input" type="number" placeholder="Est."></div><button class="btn-final" onclick="addProduto()">Salvar Produto</button><table><thead><tr><th>Produto</th><th>Preço</th><th>Est.</th><th></th></tr></thead><tbody id="tabEstoqueBody"></tbody></table></div></div>
+<div id="tab-clientes" class="hide"><div class="card"><h3>👥 Clientes</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:6px"><input id="cNome" class="input" placeholder="Nome"><input id="cFone" class="input" placeholder="WhatsApp"></div><button class="btn-final" onclick="addCliente()">Salvar Cliente</button><table><thead><tr><th>Nome</th><th>Whats</th><th>Compras</th><th></th></tr></thead><tbody id="tabCliBody"></tbody></table></div></div>
+<div id="tab-relatorios" class="hide"><div class="card"><h3>📊 Caixa e Relatórios</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0"><div style="background:#f8fafc;padding:12px;border-radius:10px"><small>Abertura</small><br><b id="rAbertura">R$ 0,00</b></div><div style="background:#f8fafc;padding:12px;border-radius:10px"><small>Vendas</small><br><b id="rVendas">R$ 0,00</b></div><div style="background:#eef4ff;padding:12px;border-radius:10px"><small>Dinheiro</small><br><b id="rDin">R$ 0,00</b></div><div style="background:#eef4ff;padding:12px;border-radius:10px"><small>PIX</small><br><b id="rPix">R$ 0,00</b></div><div style="background:#eef4ff;padding:12px;border-radius:10px"><small>Crédito</small><br><b id="rCred">R$ 0,00</b></div><div style="background:#eef4ff;padding:12px;border-radius:10px"><small>Débito</small><br><b id="rDeb">R$ 0,00</b></div></div><button class="btn-final" onclick="gerarPDF()">📄 PDF Fechamento</button><button class="btn-sec" onclick="gerarPDFProdutos()">📄 PDF Estoque</button><table style="margin-top:12px"><thead><tr><th>Hora</th><th>Cliente</th><th>Total</th><th>Pag.</th></tr></thead><tbody id="tabVendasBody"></tbody></table></div></div>
+<div id="modalCaixa" class="modal"><div class="modal-box"><h3>Abertura de Caixa</h3><input id="valorAbertura" class="input" type="number" step="0.01" placeholder="Valor em caixa ex: 50.00"><button class="btn-final" style="margin-top:10px" onclick="confirmAbrirCaixa()">Abrir Caixa</button><button class="btn-sec" onclick="fecharModais()">Cancelar</button></div></div>
+<div id="modalPag" class="modal"><div class="modal-box"><h3>Forma de Pagamento</h3><div class="pay-opt active" onclick="selPay(this,'Dinheiro')"><span>💵 Dinheiro</span></div><div class="pay-opt" onclick="selPay(this,'PIX')"><span>⚡ PIX</span></div><div class="pay-opt" onclick="selPay(this,'Cartão Crédito')"><span>💳 Crédito</span></div><div class="pay-opt" onclick="selPay(this,'Cartão Débito')"><span>💳 Débito</span></div><button class="btn-final" style="margin-top:12px" onclick="finalizar()">Confirmar Venda</button><button class="btn-sec" onclick="fecharModais()">Cancelar</button></div></div>
 <script>
-let produtos=JSON.parse(localStorage.getItem('vp_produtos')||'[{"nome":"Coca-Cola 350ml","preco":5},{"nome":"Pão de Queijo","preco":4.5},{"nome":"Água 500ml","preco":3},{"nome":"Chocolate 80g","preco":7.5}]');
-let carrinho=[];let vendasDia=parseFloat(localStorage.getItem('vp_vendasDia')||'0');
-function save(){localStorage.setItem('vp_produtos',JSON.stringify(produtos));localStorage.setItem('vp_vendasDia',vendasDia)}
-function render(){let b=document.getElementById('busca').value.toLowerCase();let l=document.getElementById('listaProdutos');l.innerHTML='';produtos.filter(p=>p.nome.toLowerCase().includes(b)).forEach((p,i)=>{l.innerHTML+=`<div class="produto"><div><b>${p.nome}</b><br><span style="color:#174ea6">R$ ${p.preco.toFixed(2)}</span></div><button class="btn-add" onclick="addCarrinho(${i})">+</button></div>`});document.getElementById('totalVendasDia').innerText='Hoje: R$ '+vendasDia.toFixed(2);}
-function renderCarrinho(){let d=document.getElementById('carrinho');d.innerHTML='';let t=0;carrinho.forEach((c,idx)=>{let s=c.preco*c.qtd;t+=s;d.innerHTML+=`<div style="display:flex;justify-content:space-between;margin:8px 0"><span>${c.qtd}x ${c.nome}</span><span>R$ ${s.toFixed(2)} <button onclick="remove(${idx})">x</button></span></div>`});document.getElementById('total').innerText='R$ '+t.toFixed(2);document.getElementById('qtd').innerText=carrinho.reduce((s,c)=>s+c.qtd,0);}
-function addProduto(){let n=document.getElementById('nome').value;let p=parseFloat(document.getElementById('preco').value);if(!n||!p)return alert('Preencha');produtos.push({nome:n,preco:p});save();render();document.getElementById('nome').value='';document.getElementById('preco').value='';}
-function addCarrinho(i){let prod=produtos[i];let ex=carrinho.find(c=>c.nome===prod.nome);if(ex)ex.qtd++;else carrinho.push({...prod,qtd:1});renderCarrinho();}
-function remove(idx){carrinho.splice(idx,1);renderCarrinho()}function limpar(){carrinho=[];renderCarrinho()}
-function finalizar(){if(carrinho.length==0)return alert('Vazio');let tot=carrinho.reduce((s,c)=>s+c.preco*c.qtd,0);vendasDia+=tot;save();render();alert('Venda R$ '+tot.toFixed(2)+' finalizada!');limpar();}
-function zap(){if(carrinho.length==0)return alert('Vazio');let tot=carrinho.reduce((s,c)=>s+c.preco*c.qtd,0);let msg=`*Venda no Ponto*%0A%0A`;carrinho.forEach(c=>{msg+=`${c.qtd}x ${c.nome} - R$ ${(c.preco*c.qtd).toFixed(2)}%0A`});msg+=`%0A*TOTAL: R$ ${tot.toFixed(2)}*`;window.open('https://wa.me/?text='+msg,'_blank');}
-render();renderCarrinho();
+let produtos=JSON.parse(localStorage.getItem('vp_pro_prod')||'[{"nome":"Coca-Cola 350ml","preco":5,"estoque":20},{"nome":"Pão de Queijo","preco":4.5,"estoque":15}]');
+let clientes=JSON.parse(localStorage.getItem('vp_pro_cli')||'[]');let vendas=JSON.parse(localStorage.getItem('vp_pro_vendas')||'[]');let caixa=JSON.parse(localStorage.getItem('vp_pro_caixa')||'{"aberto":false,"inicial":0}');let carrinho=[];let formaPagamento='Dinheiro';
+function save(){localStorage.setItem('vp_pro_prod',JSON.stringify(produtos));localStorage.setItem('vp_pro_cli',JSON.stringify(clientes));localStorage.setItem('vp_pro_vendas',JSON.stringify(vendas));localStorage.setItem('vp_pro_caixa',JSON.stringify(caixa));}
+function trocaTab(id,el){document.querySelectorAll('[id^=tab-]').forEach(t=>t.classList.add('hide'));document.getElementById('tab-'+id).classList.remove('hide');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAll();}
+function abrirCaixaModal(){document.getElementById('modalCaixa').style.display='flex';}
+function confirmAbrirCaixa(){let v=parseFloat(document.getElementById('valorAbertura').value)||0;caixa={aberto:true,inicial:v};vendas=[];save();fecharModais();renderAll();}
+function fecharCaixa(){if(!caixa.aberto)return alert('Caixa fechado');if(confirm('Fechar caixa e gerar PDF?')){caixa.aberto=false;save();renderAll();gerarPDF();}}
+function fecharModais(){document.querySelectorAll('.modal').forEach(m=>m.style.display='none');}
+function selPay(el,f){document.querySelectorAll('#modalPag.pay-opt').forEach(o=>o.classList.remove('active'));el.classList.add('active');formaPagamento=f;}
+function renderProd(){let b=(document.getElementById('busca').value||'').toLowerCase();let l=document.getElementById('listaProdutos');l.innerHTML='';produtos.filter(p=>p.nome.toLowerCase().includes(b)).forEach((p,i)=>{l.innerHTML+=`<div class="produto"><div><b>${p.nome}</b> <small style="color:${p.estoque<=3?'red':'#64748b'}">(${p.estoque})</small><br><span style="color:#174ea6">R$ ${p.preco.toFixed(2)}</span></div><button class="btn" onclick="addCarrinho(${i})">+</button></div>`});}
+function renderCarrinho(){let d=document.getElementById('carrinho');d.innerHTML='';let tot=0;carrinho.forEach((c,idx)=>{let s=c.preco*c.qtd;tot+=s;d.innerHTML+=`<div style="display:flex;justify-content:space-between;margin:6px 0"><span>${c.qtd}x ${c.nome}</span><span>R$ ${s.toFixed(2)} <button onclick="remCarr(${idx})" style="border:0;background:#fee2e2;border-radius:6px;padding:2px 6px">x</button></span></div>`});document.getElementById('total').innerText='R$ '+tot.toFixed(2);document.getElementById('qtd').innerText=carrinho.reduce((a,c)=>a+c.qtd,0);}
+function addCarrinho(i){if(!caixa.aberto)return alert('Abra o caixa!');let p=produtos[i];if(p.estoque<=0)return alert('Sem estoque');let ex=carrinho.find(c=>c.nome===p.nome);if(ex){if(ex.qtd>=p.estoque)return alert('Estoque insuficiente');ex.qtd++;}else carrinho.push({...p,qtd:1});renderCarrinho();}
+function remCarr(idx){carrinho.splice(idx,1);renderCarrinho();}function limpar(){carrinho=[];renderCarrinho();}
+function abrirModalPag(){if(carrinho.length==0)return alert('Carrinho vazio');if(!caixa.aberto)return alert('Abra o caixa');document.getElementById('modalPag').style.display='flex';}
+function finalizar(){let tot=carrinho.reduce((s,c)=>s+c.preco*c.qtd,0);let cli=document.getElementById('clienteVenda').value||'Avulso';carrinho.forEach(it=>{let p=produtos.find(pr=>pr.nome===it.nome);if(p)p.estoque-=it.qtd;});vendas.push({hora:new Date().toLocaleString('pt-BR'),cliente:cli,total:tot,pag:formaPagamento});save();renderAll();fecharModais();limpar();alert('Venda R$ '+tot.toFixed(2)+' em '+formaPagamento);}
+function addProduto(){let n=document.getElementById('pNome').value;let pr=parseFloat(document.getElementById('pPreco').value);let es=parseInt(document.getElementById('pEst').value)||0;if(!n||!pr)return alert('Preencha');produtos.push({nome:n,preco:pr,estoque:es});save();renderAll();}
+function addCliente(){let n=document.getElementById('cNome').value;let f=document.getElementById('cFone').value;if(!n)return alert('Nome');clientes.push({nome:n,fone:f});save();renderAll();}
+function renderAll(){renderProd();renderCarrinho();document.getElementById('statusCaixa').innerText=caixa.aberto?'Caixa Aberto R$ '+caixa.inicial.toFixed(2):'Caixa Fechado';let sel=document.getElementById('clienteVenda');sel.innerHTML='<option value="">Avulso</option>';clientes.forEach(c=>sel.innerHTML+=`<option>${c.nome}</option>`);let tbE=document.getElementById('tabEstoqueBody');tbE.innerHTML='';produtos.forEach((p,i)=>tbE.innerHTML+=`<tr><td>${p.nome}</td><td>R$ ${p.preco.toFixed(2)}</td><td>${p.estoque}</td><td><button onclick="produtos.splice(${i},1);save();renderAll()" style="border:0;color:red">🗑️</button></td></tr>`);let tbC=document.getElementById('tabCliBody');tbC.innerHTML='';clientes.forEach((c,i)=>tbC.innerHTML+=`<tr><td>${c.nome}</td><td>${c.fone}</td><td>${vendas.filter(v=>v.cliente===c.nome).length}</td><td><button onclick="clientes.splice(${i},1);save();renderAll()" style="border:0;color:red">🗑️</button></td></tr>`);let tbV=document.getElementById('tabVendasBody');tbV.innerHTML='';let tot=0,din=0,pix=0,cred=0,deb=0;vendas.forEach(v=>{tot+=v.total;if(v.pag==='Dinheiro')din+=v.total;if(v.pag==='PIX')pix+=v.total;if(v.pag==='Cartão Crédito')cred+=v.total;if(v.pag==='Cartão Débito')deb+=v.total;tbV.innerHTML+=`<tr><td>${v.hora}</td><td>${v.cliente}</td><td>R$ ${v.total.toFixed(2)}</td><td>${v.pag}</td></tr>`;});document.getElementById('rAbertura').innerText='R$ '+(caixa.inicial||0).toFixed(2);document.getElementById('rVendas').innerText='R$ '+tot.toFixed(2);document.getElementById('rDin').innerText='R$ '+din.toFixed(2);document.getElementById('rPix').innerText='R$ '+pix.toFixed(2);document.getElementById('rCred').innerText='R$ '+cred.toFixed(2);document.getElementById('rDeb').innerText='R$ '+deb.toFixed(2);}
+function gerarPDF(){const {jsPDF}=window.jspdf;let doc=new jsPDF();doc.text('Venda no Ponto - Fechamento',10,15);doc.text('Abertura: R$ '+(caixa.inicial||0).toFixed(2),10,25);doc.text('Data: '+new Date().toLocaleString('pt-BR'),10,32);let y=40;let tot=0;vendas.forEach(v=>{doc.text(`${v.hora} - ${v.cliente} - R$ ${v.total.toFixed(2)} - ${v.pag}`,10,y);y+=6;tot+=v.total;if(y>270){doc.addPage();y=10;}});y+=10;doc.text('TOTAL: R$ '+tot.toFixed(2),10,y);doc.save('fechamento.pdf');}
+function gerarPDFProdutos(){const {jsPDF}=window.jspdf;let doc=new jsPDF();doc.text('Relatorio Estoque',10,15);let y=25;produtos.forEach(p=>{doc.text(`${p.nome} - R$ ${p.preco.toFixed(2)} - Est: ${p.estoque}`,10,y);y+=7;});doc.save('estoque.pdf');}
+renderAll();
+</script>
+<script>
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js')}
 </script>
 </body>
 </html>
