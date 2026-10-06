@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>TAKI VENDAS PRO V24 - DADOS DA EMPRESA + NOTA PAULISTA</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>TAKI VENDAS PRO V25 - FINAL SEM TELA BRANCA</title>
 <meta name="theme-color" content="#0f172a">
-<link rel="manifest" href='data:application/manifest+json,{"name":"Taki V24","short_name":"Taki V24","display":"standalone","background_color":"#0f172a","theme_color":"#0f172a"}'>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <style>
-*{box-sizing:border-box;font-family:system-ui}body{margin:0;background:#f1f5f9}
+*{box-sizing:border-box;font-family:system-ui;-webkit-tap-highlight-color:transparent}body{margin:0;background:#f1f5f9;touch-action:manipulation}
 .top{background:#0f172a;color:#fff;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
 .hamb{font-size:22px;background:rgba(255,255,255,.12);border:none;color:#fff;width:40px;height:40px;border-radius:10px}
 .side{position:fixed;left:-310px;top:0;width:300px;height:100%;background:#fff;z-index:200;transition:.25s;box-shadow:4px 0 24px rgba(0,0,0,.3);overflow:auto;padding-bottom:20px}
@@ -22,6 +22,7 @@
 .prod{display:flex;justify-content:space-between;align-items:center;border:1px solid #e2e8f0;border-radius:12px;padding:12px;margin:6px 0;background:#fff}
 .add{background:#0f172a;color:#fff;border:none;width:48px;height:48px;border-radius:12px;font-size:26px;font-weight:900}
 .final{background:#16a34a;color:#fff;width:100%;padding:16px;border-radius:12px;border:none;font-size:18px;font-weight:900;box-shadow:0 4px 0 #14532d}
+.final:disabled{opacity:0.5}
 .cancel{background:#dc2626;color:#fff;border:none;width:100%;padding:14px;border-radius:12px;font-weight:900;margin-top:8px}
 input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:10px;margin:4px 0;font-size:16px}
 .hidden{display:none!important}
@@ -29,16 +30,23 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-ra
 .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .offline-bar{padding:7px;text-align:center;font-size:11px;font-weight:800}
 .offline-bar.on{background:#dcfce7;color:#166534}
+.offline-bar.off{background:#fee2e2;color:#b91c1c}
+.badge{background:#f59e0b;color:#fff;padding:2px 8px;border-radius:10px;font-size:10px;margin-left:6px}
 .modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:300;padding:14px}
 .modal.open{display:flex}
 .modal-box{background:#fff;width:100%;max-width:520px;border-radius:16px;padding:18px;max-height:95vh;overflow:auto}
 .pdv-layout{display:grid;grid-template-columns:1fr 390px;gap:8px}
 @media(max-width:1024px){.pdv-layout{grid-template-columns:1fr}}
-.teclado-box{background:#0f172a;border-radius:18px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);position:sticky;top:62px;display:block!important}
+.teclado-box{background:#0f172a;border-radius:18px;padding:12px;box-shadow:0 10px 30px rgba(0,0,0,.4);position:sticky;top:62px;user-select:none;display:block!important}
 .teclado-display{background:#020617;color:#22c55e;border:3px inset #1e293b;border-radius:14px;padding:12px;margin-bottom:12px;text-align:right;font-family:'Courier New',monospace}
+.teclado-display.linha1{font-size:11px;color:#94a3b8;min-height:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.teclado-display.linha2{font-size:32px;font-weight:900;letter-spacing:2px;min-height:36px;color:#4ade80}
+.teclado-display.linha3{font-size:11px;color:#fbbf24;min-height:14px;display:flex;justify-content:space-between}
 .teclado-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.tecla{background:#1e293b;color:#fff;border:none;border-bottom:5px solid #020617;border-radius:14px;padding:20px 8px;font-size:26px;font-weight:900;min-height:72px}
-.tecla.verde{background:#16a34a;border-bottom-color:#052e16}
+.tecla{background:#1e293b;color:#fff;border:none;border-bottom:5px solid #020617;border-radius:14px;padding:20px 8px;font-size:26px;font-weight:900;cursor:pointer;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.tecla:active{transform:translateY(4px);border-bottom:1px solid #020617}
+.tecla.azul{background:#1d4ed8;border-bottom-color:#1e1b4b}
+.tecla.verde{background:#16a34a;border-bottom-color:#052e16;font-size:20px}
 .tecla.verde-grande{grid-column:span 3;background:#16a34a;border-bottom-color:#052e16;font-size:20px;padding:18px;min-height:64px}
 .tecla.vermelha{background:#dc2626;border-bottom-color:#450a0a}
 .tecla.laranja{background:#f59e0b;border-bottom-color:#78350f;color:#000}
@@ -48,7 +56,7 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-ra
 .btn-quick button{background:#fff;border:1px solid #cbd5e1;border-radius:10px;padding:8px 4px;font-size:11px;font-weight:800}
 .recibo{font-family:'Courier New',monospace;background:#fff;color:#000;padding:12px;border:1px dashed #000;max-width:360px;margin:auto}
 .recibo hr{border:none;border-top:1px dashed #000;margin:8px 0}
-.recibo .linha{display:flex;justify-content:space-between}
+.recibo.linha{display:flex;justify-content:space-between}
 .social{font-size:11px;text-align:center;background:#f8fafc;padding:8px;border-radius:8px;margin-top:6px}
 .input-icon{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #cbd5e1;border-radius:12px;padding:0 12px;margin:6px 0}
 .input-icon span{font-size:20px;min-width:28px;text-align:center}
@@ -66,6 +74,246 @@ input,select,textarea{width:100%;padding:12px;border:1px solid #cbd5e1;border-ra
 </style>
 </head>
 <body>
-<!-- COLE TODO O ARQUIVO V24 AQUI - arquivo completo está em /mnt/data/taki_v24_dados_empresa_nota_paulista.html -->
+<div id="login" class="card" style="max-width:420px;margin:20px auto;text-align:center;display:block">
+<h2>🔥 TAKI VENDAS PRO V25</h2>
+<p style="font-weight:800">V25 - FINAL SEM TELA BRANCA<br>MENU COMPLETO + SENHAS + INSTALAR</p>
+<div style="background:#0f172a;color:#4ade80;padding:10px;border-radius:12px;font-family:monospace;margin:10px 0;text-align:center;border:2px solid #22c55e">
+<div style="font-size:13px">✅ MENU COMPLETO<br>🔑 SENHAS SIMPLES/MASTER<br>📲 INSTALAR APP<br>🧾 NOTA PAULISTA<br>⌨️ TECLADO FIXO</div>
+</div>
+<input id="lojaId" value="LOJA-CARAGUA-01" style="font-weight:900;text-align:center">
+<select id="caixaId"><option value="ADMIN">👑 ADMIN CENTRAL</option><option value="CAIXA_01">CAIXA 01</option><option value="CAIXA_02">CAIXA 02</option><option value="CAIXA_03">CAIXA 03</option><option value="CAIXA_04">CAIXA 04</option></select>
+<input id="senhaId" type="password" placeholder="🔑 Senha 1234 / 102030" style="font-weight:700;text-align:center;margin-top:8px">
+<button onclick="entrar()" class="final" style="margin-top:12px">🚀 ENTRAR</button>
+<button id="btnInstalarLogin" class="instalar-btn pulse-install" style="margin-top:10px;display:none" onclick="instalarApp()">📲 INSTALAR APP NO CELULAR</button>
+</div>
+<div id="app" style="display:none">
+<div class="top"><div style="display:flex;align-items:center;gap:8px"><button class="hamb" onclick="toggleMenu()">☰</button><b>🏪 TAKI V25</b> <span id="tipoUserBadge" style="background:#4ade80;color:#000;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:900"></span> <span id="caixaStatusBadge" style="background:#f59e0b;color:#000;padding:3px 8px;border-radius:8px;font-size:10px;font-weight:900">FECHADO</span></div><div style="display:flex;gap:6px"><button id="btnInstalarTop" onclick="instalarApp()" style="background:#22c55e;color:#000;border:none;padding:6px 12px;border-radius:8px;font-weight:900;font-size:11px;display:none">📲 INSTALAR</button><span id="labelCaixa" style="background:rgba(255,255,255,.15);padding:5px 10px;border-radius:20px;font-size:11px"></span></div></div>
+<div id="connBar" class="offline-bar on">🟢 ONLINE V25 - MENU COMPLETO - SEM TELA BRANCA</div>
+<div style="background:#0f172a;color:#fff;padding:6px 14px;display:flex;justify-content:space-between;font-size:11px"><span id="labelLoja">LOJA</span><span style="color:#4ade80">R$ <span id="fatTop">0,00</span> hoje • V25</span></div>
+<div class="overlay" id="overlay" onclick="toggleMenu()"></div>
+<div class="side" id="sideMenu">
+<div class="side-header"><h3 style="margin:0">🔥 TAKI V25 FINAL</h3><small id="sideLoja"></small><br><small id="sideCaixa"></small><br><small id="sideUserTipo" style="background:#4ade80;color:#000;padding:3px 8px;border-radius:8px;font-size:11px;font-weight:900;margin-top:6px;display:inline-block"></small><br><small id="sideEmpNome" style="background:rgba(255,255,255,.15);padding:4px 8px;border-radius:8px;font-size:10px;margin-top:6px;display:inline-block"></small><br><small id="sideConn" style="background:rgba(255,255,255,.2);padding:3px 8px;border-radius:10px;margin-top:6px;display:inline-block;font-size:11px">🟢 Online</small></div>
+<div class="menu-item active" onclick="ir('pdv',this)"><span>🛒</span> PDV + Teclado Fixo</div>
+<div class="menu-item" onclick="ir('empresa',this)" style="background:#fef3c7;border-left:4px solid #f59e0b"><span>🏢</span> Dados Da Empresa</div>
+<div class="menu-item" onclick="ir('produtos',this)"><span>📦</span> Produtos - Código Auto + Limpa Tela</div>
+<div class="menu-item" onclick="ir('estoque',this)"><span>📊</span> Estoque</div>
+<div class="menu-item" onclick="ir('clientes',this)"><span>👥</span> Clientes</div>
+<div class="menu-item" onclick="ir('fornecedores',this)"><span>🚚</span> Fornecedores</div>
+<div class="menu-item" onclick="ir('balanca',this)"><span>⚖️</span> Balança</div>
+<div class="menu-item" onclick="ir('caixa',this)"><span>💰</span> Abrir / Fechar Caixa</div>
+<div class="menu-item" onclick="ir('relatorios',this)"><span>📈</span> Relatórios</div>
+<div class="menu-item" onclick="ir('cancelados',this)"><span>🗑️</span> Cancelados</div>
+<div class="menu-item" onclick="ir('sync',this)"><span>🔄</span> Fila Offline <span id="filaBadge" class="badge" style="display:none">0</span></div>
+<div class="menu-item" onclick="ir('senhas',this)" style="background:#e0e7ff;border-left:4px solid #4f46e5"><span>🔑</span> Senhas - Simples e Master</div>
+<div class="menu-item" onclick="ir('admin',this)" id="itemAdmin" style="display:none;background:#dcfce7"><span>👑</span> Admin Ao Vivo</div>
+<div style="padding:14px;display:grid;gap:8px">
+<button id="btnInstalarMenu" class="instalar-btn pulse-install" onclick="instalarApp()" style="display:none">📲 INSTALAR APP NO CELULAR</button>
+<button onclick="logout()" style="width:100%;padding:12px;border-radius:10px;background:#ef4444;color:#fff;border:none;font-weight:800">🚪 Sair</button>
+</div>
+</div>
+<div id="aba-pdv" class="aba">
+<div class="pdv-layout">
+<div>
+<div class="card" style="padding:10px"><div class="btn-quick"><button onclick="quickAdd('101')">101<br>Coxinha</button><button onclick="quickAdd('102')">102<br>Coca</button><button onclick="quickAdd('103')">103<br>Pastel</button><button onclick="quickAdd('201')">201<br>Alcatra</button></div><div style="display:flex;gap:6px"><input id="buscaProd" placeholder="🔍 Buscar..." onkeyup="renderProdutos()" style="flex:1"><button onclick="toggleTeclado()" style="padding:10px 14px;border-radius:10px;background:#0f172a;color:#4ade80;border:none;font-weight:800">⌨️</button></div><div id="listaProdutos" style="max-height:28vh;overflow:auto;margin-top:6px"></div></div>
+<div class="card" style="border:2px solid #0f172a;padding:10px">
+<h3 style="margin:4px 0">🛒 Venda <span id="numVenda">0</span> <small id="caixaAbertoInfo" style="font-size:11px;color:#b45309"></small></h3>
+<div id="carrinho" style="margin:10px 0;min-height:56px;border:2px dashed #0f172a;border-radius:12px;padding:8px;background:#f8fafc"></div>
+<h2 style="text-align:right">TOTAL R$ <span id="total">0.00</span></h2>
+<select id="pagamento"><option>💵 Dinheiro</option><option>⚡ Pix</option><option>💳 Cartão Crédito</option><option>💳 Cartão Débito</option><option>🧾 Fiado</option></select>
+<input id="clienteVenda" placeholder="👤 Cliente Avulso" style="margin-top:6px">
+<input id="zapCliente" placeholder="📲 Zap cliente" style="margin-top:6px">
+<div class="nfp-box" id="nfpBox">
+<label style="display:flex;gap:8px;align-items:center;font-weight:800;font-size:13px;color:#92400e"><input type="checkbox" id="checkNFP" style="width:20px" onchange="toggleNFP()"> 🧾 Emitir Nota Fiscal Paulista?</label>
+<div id="nfpCampo" style="display:none;margin-top:8px">
+<input id="cpfNFP" placeholder="📄 CPF / CNPJ para NFP - Ex: 123.456.789-00" style="border:2px solid #f59e0b;font-weight:700">
+</div>
+</div>
+<button id="btnFinalizar" class="final" onclick="finalizar()">✓ FINALIZAR VENDA</button>
+<button class="cancel" onclick="cancelarVendaTotal()">🗑️ CANCELAR VENDA</button>
+</div>
+</div>
+<div id="tecladoBox" class="teclado-box" style="display:block!important">
+<div class="teclado-display"><div class="linha1" id="displayLinha1">✅ V25 - TECLADO FIXO</div><div class="linha2" id="displayLinha2">0</div><div class="linha3"><span id="displayLinha3a">QTD: 1</span><span id="displayLinha3b" style="color:#4ade80">PRONTO V25</span></div></div>
+<div class="teclado-grid">
+<button class="tecla" onclick="tecla('7')"><span>7</span></button>
+<button class="tecla" onclick="tecla('8')"><span>8</span></button>
+<button class="tecla" onclick="tecla('9')"><span>9</span></button>
+<button class="tecla" onclick="tecla('4')"><span>4</span></button>
+<button class="tecla" onclick="tecla('5')"><span>5</span></button>
+<button class="tecla" onclick="tecla('6')"><span>6</span></button>
+<button class="tecla" onclick="tecla('1')"><span>1</span></button>
+<button class="tecla" onclick="tecla('2')"><span>2</span></button>
+<button class="tecla" onclick="tecla('3')"><span>3</span></button>
+<button class="tecla" onclick="tecla('0')"><span>0</span></button>
+<button class="tecla cinza" onclick="tecla('00')"><span>00</span></button>
+<button class="tecla laranja" onclick="tecla('X')"><span>X</span></button>
+<button class="tecla vermelha" onclick="tecla('C')"><span>C</span></button>
+<button class="tecla azul" onclick="tecla('COD')"><span>COD</span></button>
+<button class="tecla verde" onclick="tecla('ENTER')"><span>✔</span></button>
+</div>
+<button class="tecla verde-grande" style="margin-top:10px" onclick="finalizar()"><span>💰 FINALIZAR VENDA</span></button>
+</div>
+</div>
+</div>
+<div id="aba-empresa" class="aba hidden">
+<div class="card" style="border:2px solid #f59e0b;background:#fffef7">
+<div style="background:#0f172a;color:#fff;padding:14px;border-radius:12px;margin-bottom:12px">
+<h3 style="margin:0;color:#fbbf24">🏢 Dados Da Empresa</h3>
+</div>
+<div class="grupo-empresa">
+<label class="label">1️⃣ CNPJ ou CPF *</label>
+<div class="input-icon"><span>🪪</span><input id="empCnpj" value="12.345.678/0001-99"></div>
+<label class="label">2️⃣ Nome Fantasia *</label>
+<div class="input-icon"><span>🏪</span><input id="empNome" value="Mercado Taki - Caraguatatuba"></div>
+<label class="label">Endereço</label>
+<div class="input-icon"><span>📍</span><input id="empEnd" value="Av. Brasil, 1000 - Centro"></div>
+<label class="label">IE para NFP</label>
+<div class="input-icon"><span>🧾</span><input id="empIE" value="123.456.789.112"></div>
+</div>
+<div class="grupo-empresa">
+<div class="grupo-rede"><label class="label">Instagram</label><div class="input-icon"><span>📸</span><input id="empInsta" value="@mercadotaki"></div></div>
+<div class="grupo-rede"><label class="label">WhatsApp</label><div class="input-icon"><span>📲</span><input id="empZap" value="(12) 98888-7777"></div></div>
+<div class="grupo-rede"><label class="label">YouTube</label><div class="input-icon"><span>▶️</span><input id="empYoutube" value="youtube.com/@mercadotaki"></div></div>
+</div>
+<div class="grupo-empresa">
+<label class="label">Mensagem Rodapé + Pix</label>
+<textarea id="empMsg" rows="3">Obrigado pela preferência!
+Pix: (12) 98888-7777</textarea>
+<label class="label">Mensagem NFP</label>
+<textarea id="empMsgNFP" rows="2">Seu CPF foi incluído na Nota Fiscal Paulista.</textarea>
+</div>
+<button class="final" style="background:#f59e0b;color:#000;margin-top:14px" onclick="salvarEmpresa()">💾 SALVAR DADOS DA EMPRESA</button>
+<div style="margin-top:16px;background:#0f172a;color:#fff;padding:14px;border-radius:12px">
+<h4 style="margin:0;color:#4ade80">👁️ PRÉVIA:</h4>
+<div id="previaNota" class="recibo" style="margin-top:12px;border:3px solid #4ade80"></div>
+</div>
+</div>
+</div>
+<div id="aba-produtos" class="aba hidden"><div class="card" style="border:2px solid #16a34a"><h3>📦 Produtos</h3><div style="background:#dcfce7;padding:10px;border-radius:10px;margin-bottom:10px"><div style="font-size:12px">Próximo: <b id="proxCodigo">104</b> | Total: <b id="totalProdCount">3</b></div></div><div class="row"><div><label class="label">Código * (Auto)</label><input id="pCodigo" type="number"></div><div><label class="label">Nome *</label><input id="pNome"></div></div><div class="row"><div><label class="label">Preço R$ *</label><input id="pPreco" type="number" step="0.01"></div><div><label class="label">Estoque</label><input id="pEstoque" type="number" value="100"></div></div><button class="final" style="background:#16a34a" onclick="salvarProduto()">💾 SALVAR E LIMPAR</button><div id="msgProduto" style="margin-top:10px;display:none"></div><div id="listaCadastroProdutos" style="margin-top:12px;max-height:50vh;overflow:auto"></div></div></div>
+<div id="aba-estoque" class="aba hidden"><div class="card"><h3>📊 Estoque</h3><div class="row"><div class="card" style="background:#fef3c7;margin:0;text-align:center"><small>Baixo</small><h2 id="estBaixo">0</h2></div><div class="card" style="background:#dcfce7;margin:0;text-align:center"><small>Total</small><h2 id="estTotal">0</h2></div></div><div id="listaEstoque"></div></div></div>
+<div id="aba-clientes" class="aba hidden"><div class="card"><h3>👥 Clientes</h3><input id="cNome" placeholder="Nome"><input id="cTel" placeholder="Telefone"><input id="cCpf" placeholder="CPF para NFP"><button class="final" style="background:#2563eb" onclick="salvarCliente()">💾 Salvar</button><div id="listaClientes" style="margin-top:12px"></div></div></div>
+<div id="aba-fornecedores" class="aba hidden"><div class="card"><h3>🚚 Fornecedores</h3><input id="fNome" placeholder="Empresa"><input id="fTel" placeholder="Telefone"><button class="final" style="background:#7c3aed" onclick="salvarFornecedor()">💾 Salvar</button><div id="listaFornecedores" style="margin-top:12px"></div></div></div>
+<div id="aba-balanca" class="aba hidden"><div class="card"><h3>⚖️ Balança</h3><h1 id="pesoDisplay" style="font-size:48px;text-align:center">0.000</h1><div style="display:flex;gap:6px;justify-content:center"><button onclick="setPeso(0.25)">0.25kg</button><button onclick="setPeso(0.5)">0.5kg</button><button onclick="setPeso(1)">1kg</button><button onclick="setPeso(0)">Zerar</button></div><input id="pesoManual" type="number" step="0.001" oninput="pesoAtual=this.valueAsNumber||0;document.getElementById('pesoDisplay').innerText=(pesoAtual||0).toFixed(3);calcBalanca()"><select id="produtoBalanca" onchange="calcBalanca()"></select><h2 style="text-align:center;color:#16a34a">R$ <span id="totalBalanca">0.00</span></h2><button class="final" onclick="addBalanca()">➕ Jogar pro PDV</button></div></div>
+<div id="aba-caixa" class="aba hidden"><div class="card"><h3>💰 Caixa</h3><div id="caixaStatusBox" style="padding:12px;border-radius:12px;margin:10px 0"></div><div class="row"><div><label class="label">Abertura R$</label><input id="valorAbertura" type="number" step="0.01"></div><div><label class="label">Troco R$</label><input id="trocoInicial" type="number" step="0.01"></div></div><button id="btnAbrirCaixa" class="final" style="background:#16a34a;margin-top:8px" onclick="abrirCaixa()">🔓 ABRIR CAIXA</button><button id="btnFecharCaixa" class="final" style="background:#dc2626;margin-top:8px;display:none" onclick="fecharCaixa()">🔒 FECHAR CAIXA</button><div id="resumoCaixa" style="margin-top:12px"></div><div id="historicoCaixa" style="margin-top:10px;max-height:40vh;overflow:auto"></div></div></div>
+<div id="aba-relatorios" class="aba hidden"><div class="card"><h3>📈 Relatórios</h3><div class="row"><div class="card" style="margin:0;background:#dbeafe;text-align:center"><small>Faturamento</small><h3 id="relFat">R$ 0,00</h3></div><div class="card" style="margin:0;background:#dcfce7;text-align:center"><small>Vendas</small><h3 id="relQtd">0</h3></div></div><div class="row" style="margin-top:8px"><div class="card" style="margin:0;background:#fef3c7;text-align:center"><small>Com NFP</small><h3 id="relNFP">0</h3></div><div class="card" style="margin:0;background:#f3f4f6;text-align:center"><small>Sem NFP</small><h3 id="relSemNFP">0</h3></div></div></div></div>
+<div id="aba-cancelados" class="aba hidden"><div class="card"><h3>🗑️ Cancelados</h3><div id="listaCancelados"></div></div></div>
+<div id="aba-sync" class="aba hidden"><div class="card"><h3>🔄 Fila Offline</h3><div id="filaOffline"></div><button class="final" style="background:#f59e0b;margin-top:10px" onclick="forcarSync()">🔄 Sincronizar</button></div></div>
+<div id="aba-senhas" class="aba hidden">
+<div class="card" style="border:2px solid #4f46e5;background:#eef2ff">
+<div style="background:#0f172a;color:#fff;padding:14px;border-radius:12px;margin-bottom:12px"><h3 style="margin:0;color:#a5b4fc">🔑 SENHAS - SIMPLES E MASTER</h3></div>
+<div style="background:#fff;border:2px solid #4f46e5;border-radius:14px;padding:12px;margin-bottom:12px">
+<label class="label">Caixa</label><select id="senhaCaixaSelect"><option value="CAIXA_01">CAIXA 01</option><option value="CAIXA_02">CAIXA 02</option><option value="CAIXA_03">CAIXA 03</option><option value="CAIXA_04">CAIXA 04</option><option value="ADMIN">ADMIN</option></select>
+<label class="label">Tipo</label><select id="senhaTipoSelect"><option value="simples">🔵 SIMPLES - Só vende</option><option value="master">🔴 MASTER - Pode tudo</option></select>
+<label class="label">Nome da Pessoa</label><input id="senhaNomePessoa" placeholder="Ex: João">
+<label class="label">Senha</label><input id="senhaNova" placeholder="Ex: 1234" style="font-weight:900;font-size:20px;text-align:center">
+<button class="final" style="background:#4f46e5" onclick="salvarNovaSenha()">🔑 SALVAR SENHA</button>
+<div id="msgSenha" style="margin-top:10px;display:none"></div>
+</div>
+<div style="background:#fff;border-radius:14px;padding:12px">
+<div style="display:flex;gap:8px;margin-bottom:10px"><div style="flex:1;background:#dbeafe;padding:8px;border-radius:8px;text-align:center"><small>Simples</small><h3 id="totalSimples">0</h3></div><div style="flex:1;background:#dcfce7;padding:8px;border-radius:8px;text-align:center"><small>Master</small><h3 id="totalMaster">0</h3></div></div>
+<div id="listaSenhas" style="max-height:50vh;overflow:auto"></div>
+</div>
+</div>
+</div>
+<div id="aba-admin" class="aba hidden"><div class="card"><h3>👑 Admin</h3><h2 id="adminFatTotal">R$ 0,00</h2><div id="adminAoVivo"></div></div></div>
+</div>
+<div id="modalRecibo" class="modal"><div class="modal-box">
+<div id="reciboPrint" class="recibo">
+<div style="text-align:center"><h2 id="rEmpNome">Mercado Taki</h2><small id="rEmpCnpj"></small><br><small id="rEmpEnd"></small><br><small id="rEmpIE"></small></div><hr>
+<div style="font-size:11px"><div class="linha"><span>Data:</span><span id="rData"></span></div><div class="linha"><span>Caixa:</span><span id="rCaixa"></span></div><div class="linha"><span>Cliente:</span><span id="rCliente"></span></div><div class="linha"><span>Venda:</span><span id="rVendaId"></span></div></div>
+<div id="rNFPBox" style="display:none;background:#fef3c7;border:2px solid #f59e0b;padding:8px;border-radius:8px;margin:8px 0"><div style="text-align:center;font-weight:900">🧾 NOTA FISCAL PAULISTA</div><div style="text-align:center">CPF: <b id="rCPF"></b></div></div><hr>
+<div id="rItens"></div><hr>
+<div><div class="linha"><b>TOTAL</b><b id="rTotal">R$ 0,00</b></div><div class="linha"><span>Pagamento:</span><span id="rPag"></span></div></div><hr>
+<div style="text-align:center;font-size:11px;white-space:pre-line" id="rMsg"></div>
+<div id="rMsgNFP" style="display:none;text-align:center;font-size:10px;background:#dcfce7;padding:6px;border-radius:6px;margin-top:6px"></div>
+<div id="rSocial" class="social"></div><hr>
+<div style="text-align:center;font-size:10px">Não é documento fiscal<br><span id="rHora"></span></div>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:14px">
+<button class="final" style="background:#0f172a" onclick="imprimirRecibo()">🖨️ IMPRIMIR</button>
+<button class="final" style="background:#2563eb" onclick="salvarPDF()">📄 PDF</button>
+<button class="final" style="background:#25D366" onclick="enviarZap()">📲 ZAP CLIENTE</button>
+<button class="final" style="background:#f59e0b;color:#000" onclick="enviarZapLoja()">📲 ZAP LOJA</button>
+<button style="grid-column:span 2;padding:12px;border-radius:10px;background:#fff;border:1px solid #cbd5e1;margin-top:4px" onclick="fecharRecibo()">Fechar</button>
+</div>
+</div></div>
+<script>
+let deferredPrompt=null;
+window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;let b1=document.getElementById('btnInstalarLogin');let b2=document.getElementById('btnInstalarMenu');let b3=document.getElementById('btnInstalarTop');if(b1)b1.style.display='flex';if(b2)b2.style.display='flex';if(b3)b3.style.display='block';});
+function instalarApp(){if(deferredPrompt){deferredPrompt.prompt();deferredPrompt.userChoice.then((choice)=>{if(choice.outcome==='accepted'){alert('✅ App instalado!');}deferredPrompt=null;});}else{alert('📲 Para instalar:\nAndroid: 3 pontinhos > Instalar app\niPhone: Compartilhar > Adicionar à Tela de Início');}}
+const firebaseConfig={apiKey:"AIzaSyCUAnzfTlUeEEN6bXL-rSPWzudobwdEeUI",authDomain:"venda-no-ponto.firebaseapp.com",databaseURL:"https://venda-no-ponto-default-rtdb.firebaseio.com",projectId:"venda-no-ponto",storageBucket:"venda-no-ponto.firebasestorage.app",messagingSenderId:"891438595344",appId:"1:891438595344:web:eac019ede805eb4240f995"};
+try{firebase.initializeApp(firebaseConfig);}catch(e){}
+const db = (typeof firebase.database === 'function')? firebase.database() : null;
+let SENHAS=JSON.parse(localStorage.getItem("taki_senhas")||"null")||{"ADMIN":["master123","102030","TAKI2024"],"CAIXA_01":["1234","0000"],"CAIXA_02":["1234","0000"],"CAIXA_03":["1234","0000"],"CAIXA_04":["1234","0000"]};
+let SENHAS_DETALHES=JSON.parse(localStorage.getItem("taki_senhas_detalhes")||"null")||[{id:"1",caixa:"ADMIN",tipo:"master",nome:"Dono",senha:"master123"},{id:"2",caixa:"ADMIN",tipo:"master",nome:"Gerente",senha:"102030"},{id:"3",caixa:"CAIXA_01",tipo:"simples",nome:"Operador Manha",senha:"1234"},{id:"4",caixa:"CAIXA_01",tipo:"simples",nome:"Operador Tarde",senha:"0000"}];
+const SENHA_MASTER_LIST=["master123","102030","TAKI2024"];
+let LOJA="",CAIXA="",TIPO_USER="operador";
+let produtos=JSON.parse(localStorage.getItem("taki_produtos")||"null")||[{id:"101",codigo:"101",nome:"Coxinha",preco:5,estoque:100,porPeso:false},{id:"102",codigo:"102",nome:"Coca-Cola 350ml",preco:5,estoque:50,porPeso:false},{id:"103",codigo:"103",nome:"Pastel de carne",preco:6,estoque:80,porPeso:false},{id:"201",codigo:"201",nome:"Alcatra Kg",preco:45.9,estoque:50,porPeso:true}];
+let clientes=JSON.parse(localStorage.getItem("taki_clientes")||"null")||[{nome:"Avulso"}];
+let fornecedores=JSON.parse(localStorage.getItem("taki_fornecedores")||"null")||[];
+let vendasLocais=JSON.parse(localStorage.getItem("taki_vendas")||"[]");
+let filaOffline=JSON.parse(localStorage.getItem("taki_fila")||"[]");
+let cancelados=JSON.parse(localStorage.getItem("taki_cancelados")||"[]");
+let caixaInfo=JSON.parse(localStorage.getItem("taki_caixaInfo")||"null")||{aberto:false};
+let empresa=JSON.parse(localStorage.getItem("taki_empresa")||"null")||{nome:"Mercado Taki - Caraguatatuba",cnpj:"12.345.678/0001-99",ie:"123.456.789.112",insta:"@mercadotaki",tiktok:"@mercadotaki",face:"facebook.com/mercadotaki",zap:"(12) 98888-7777",youtube:"youtube.com/@mercadotaki",end:"Av. Brasil, 1000 - Centro, Caraguatatuba - SP",msg:"Obrigado pela preferência! Volte sempre!\nPix: (12) 98888-7777",msgNFP:"Seu CPF foi incluído na Nota Fiscal Paulista. Créditos em até 10 dias. Obrigado!"};
+let carrinho=[],pesoAtual=0,isOnline=navigator.onLine, ultimaVenda=null, bufferTeclado="", bufferQtd="1";
+function safeGet(id){return document.getElementById(id);}
+function getProximoCodigo(){let maxCod=0;produtos.forEach(p=>{let cod=parseInt(p.codigo)||0;if(cod>maxCod) maxCod=cod;});if(maxCod<100) return 101;return maxCod+1;}
+function atualizarProximoCodigo(){let prox=getProximoCodigo();let a=safeGet("pCodigo");if(a)a.value=prox;let b=safeGet("proxCodigo");if(b)b.innerText=prox;let c=safeGet("totalProdCount");if(c)c.innerText=produtos.length;}
+function quickAdd(cod){bufferTeclado=cod;bufferQtd="1";tecla('ENTER');}
+function toggleTeclado(){let el=safeGet('tecladoBox');if(!el)return;el.style.display=el.style.display==='none'?'block':'none';}
+function toggleNFP(){let check=safeGet("checkNFP");let campo=safeGet("nfpCampo");let box=safeGet("nfpBox");if(!check||!campo||!box)return;if(check.checked){campo.style.display="block";box.classList.add("ativo");}else{campo.style.display="none";box.classList.remove("ativo");safeGet("cpfNFP").value="";}}
+function tecla(v){let d2=safeGet("displayLinha2"), d1=safeGet("displayLinha1"), d3a=safeGet("displayLinha3a"), d3b=safeGet("displayLinha3b");if(!d2) return;if(v==="C"){bufferTeclado="";bufferQtd="1";d2.innerText="0";if(d1)d1.innerText="✅ V25 - TECLADO FIXO";if(d3a)d3a.innerText="QTD: 1";if(d3b)d3b.innerText="PRONTO V25";return;}if(v==="X"){if(bufferTeclado!==""){bufferQtd=bufferTeclado;bufferTeclado="";if(d1)d1.innerText=`QTD: ${bufferQtd} x`;d2.innerText="0";if(d3a)d3a.innerText=`QTD: ${bufferQtd}`;}return;}if(v==="COD"){buscarProdutoPorCodigo(bufferTeclado||d2.innerText);return;}if(v==="ENTER"){let cod=bufferTeclado||d2.innerText;if(cod==="0"||cod==="")return;processarCodigo(cod);bufferTeclado="";bufferQtd="1";return;}if(v==="00")bufferTeclado+="00";else bufferTeclado+=v;if(bufferTeclado.length>6)bufferTeclado=bufferTeclado.slice(-6);d2.innerText=bufferTeclado;let prod=produtos.find(p=>String(p.codigo)===String(bufferTeclado));if(prod){if(d1)d1.innerText=`${prod.nome} - R$ ${Number(prod.preco).toFixed(2)}`;if(d3a)d3a.innerText=`QTD: ${bufferQtd} | ENTER`;if(d3b)d3b.innerText="ACHOU ✅";}}
+function processarCodigo(cod){let qtd=parseInt(bufferQtd)||1;let prod=produtos.find(p=>String(p.codigo)===String(cod));if(!prod){let d1=safeGet("displayLinha1");if(d1)d1.innerText=`❌ ${cod} NÃO ACHOU`;let d2=safeGet("displayLinha2");if(d2)d2.innerText="ERRO";return;}if(!caixaInfo.aberto){alert("🔒 Caixa fechado! Abra em Abrir/Fechar Caixa");return}let ex=carrinho.find(x=>String(x.id)===String(prod.id));if(ex)ex.qtd+=qtd; else carrinho.push({id:String(prod.id),codigo:String(prod.codigo),nome:prod.nome,preco:Number(prod.preco),qtd:qtd});renderCarrinho();let d1=safeGet("displayLinha1");if(d1)d1.innerText=`✅ ${prod.nome}`;let d2=safeGet("displayLinha2");if(d2)d2.innerText=`${qtd}x ${Number(prod.preco).toFixed(2)} = R$ ${(qtd*prod.preco).toFixed(2)}`;let busca=safeGet("buscaProd");if(busca)busca.value="";renderProdutos();}
+function buscarProdutoPorCodigo(cod){let prod=produtos.find(p=>String(p.codigo)===String(cod)); if(prod){let d1=safeGet("displayLinha1");if(d1)d1.innerText=`🔍 ${prod.nome}`; let d2=safeGet("displayLinha2");if(d2)d2.innerText=prod.codigo;}}
+function saveLocal(){localStorage.setItem("taki_produtos",JSON.stringify(produtos));localStorage.setItem("taki_clientes",JSON.stringify(clientes));localStorage.setItem("taki_fornecedores",JSON.stringify(fornecedores));localStorage.setItem("taki_vendas",JSON.stringify(vendasLocais));localStorage.setItem("taki_fila",JSON.stringify(filaOffline));localStorage.setItem("taki_cancelados",JSON.stringify(cancelados));localStorage.setItem("taki_caixaInfo",JSON.stringify(caixaInfo));localStorage.setItem("taki_empresa",JSON.stringify(empresa));localStorage.setItem("taki_senhas",JSON.stringify(SENHAS));localStorage.setItem("taki_senhas_detalhes",JSON.stringify(SENHAS_DETALHES));}
+function salvarEmpresa(){let cnpjEl=safeGet("empCnpj");let nomeEl=safeGet("empNome");let cnpjVal=cnpjEl?cnpjEl.value.trim():"";let nomeVal=nomeEl?nomeEl.value.trim():"";if(!cnpjVal||!nomeVal){alert("⚠️ Preencha CNPJ/CPF e Nome!");return;}empresa={nome:nomeVal,cnpj:cnpjVal,ie:safeGet("empIE")?safeGet("empIE").value.trim():"",insta:safeGet("empInsta")?safeGet("empInsta").value.trim():"",tiktok:safeGet("empTiktok")?safeGet("empTiktok").value.trim():"",face:safeGet("empFace")?safeGet("empFace").value.trim():"",zap:safeGet("empZap")?safeGet("empZap").value.trim():"",youtube:safeGet("empYoutube")?safeGet("empYoutube").value.trim():"",end:safeGet("empEnd")?safeGet("empEnd").value.trim():"",msg:safeGet("empMsg")?safeGet("empMsg").value.trim():"",msgNFP:safeGet("empMsgNFP")?safeGet("empMsgNFP").value.trim():""};try{localStorage.setItem("taki_empresa",JSON.stringify(empresa));}catch(e){}if(isOnline && db){try{db.ref(`lojas/${LOJA}/empresa`).set(empresa);}catch(e){}}alert("✅ DADOS DA EMPRESA SALVOS!\n"+empresa.nome);renderPreviaNota();let sideEmp=safeGet("sideEmpNome");if(sideEmp)sideEmp.innerText=empresa.nome;}
+function renderPreviaNota(){let div=safeGet("previaNota"); if(!div) return;let socialHtml="";if(empresa.insta) socialHtml+=`📸 ${empresa.insta} `;if(empresa.zap) socialHtml+=`📲 ${empresa.zap} `;div.innerHTML=`<div style="text-align:center"><b>${empresa.nome||'Minha Empresa'}</b><br><small>🪪 ${empresa.cnpj||''}</small><br><small>IE: ${empresa.ie||''}</small><br><small>${empresa.end||''}</small></div><hr><div style="font-size:11px">Data: ${new Date().toLocaleString("pt-BR")}</div><hr><div style="font-size:11px">101 - Coxinha<br>1 x 5,00 = R$ 5,00</div><hr><div style="display:flex;justify-content:space-between"><b>TOTAL</b><b>R$ 5,00</b></div><div style="background:#fef3c7;padding:4px;border-radius:6px;margin-top:6px;font-size:10px"><b>🧾 NFP:</b> 123.456.789-00<br>${empresa.msgNFP||''}</div><hr><div style="text-align:center;font-size:10px;white-space:pre-line">${empresa.msg||''}</div>`;let map={empNome:"nome",empCnpj:"cnpj",empIE:"ie",empInsta:"insta",empZap:"zap",empYoutube:"youtube",empEnd:"end",empMsg:"msg",empMsgNFP:"msgNFP"};for(let k in map){let el=safeGet(k);if(el)el.value=empresa[map[k]]||"";}let sideEmp=safeGet("sideEmpNome");if(sideEmp)sideEmp.innerText=empresa.nome||"";}
+function updateConn(){isOnline=navigator.onLine;let bar=safeGet("connBar");if(bar){bar.className=isOnline?"offline-bar on":"offline-bar off";bar.innerText=isOnline?"🟢 ONLINE V25":"🔴 OFFLINE";}let sc=safeGet("sideConn");if(sc)sc.innerText=isOnline?"🟢 Online":"🔴 Offline";if(isOnline&&filaOffline.length>0)forcarSync();renderFila();}
+window.addEventListener("online",updateConn);window.addEventListener("offline",updateConn);
+function entrar(){let lojaEl=safeGet("lojaId");let caixaEl=safeGet("caixaId");let senhaEl=safeGet("senhaId");LOJA=lojaEl?(lojaEl.value||"LOJA-CARAGUA-01").toUpperCase().trim():"LOJA-CARAGUA-01";CAIXA=caixaEl?caixaEl.value:"CAIXA_01";let senha=senhaEl?senhaEl.value.trim():"";if(!senha){alert("Digite senha!");return}let senhasValidas=SENHAS[CAIXA]||[];let achouDetalhe=SENHAS_DETALHES.find(s=>String(s.caixa)===String(CAIXA)&&String(s.senha)===String(senha));let isMaster=false;if(achouDetalhe){isMaster=achouDetalhe.tipo==="master";}else{if(!senhasValidas.includes(senha)&&!SENHA_MASTER_LIST.includes(senha)){alert("❌ Senha errada! Tente 1234 ou master123");return}isMaster=SENHA_MASTER_LIST.includes(senha)||CAIXA==="ADMIN";}TIPO_USER=isMaster?"master":"operador";let saved=null;try{saved=JSON.parse(localStorage.getItem("taki_caixaInfo_"+CAIXA+"_"+LOJA)||"null");}catch(e){}if(saved)caixaInfo=saved;let empSaved=null;try{empSaved=JSON.parse(localStorage.getItem("taki_empresa")||"null");}catch(e){}if(empSaved)empresa=empSaved;let loginEl=safeGet("login");if(loginEl)loginEl.style.display="none";let appEl=safeGet("app");if(appEl)appEl.style.display="block";let labelCaixa=safeGet("labelCaixa");if(labelCaixa)labelCaixa.innerText=CAIXA+" - "+(achouDetalhe?achouDetalhe.nome:"");let labelLoja=safeGet("labelLoja");if(labelLoja)labelLoja.innerText=LOJA;let sideLoja=safeGet("sideLoja");if(sideLoja)sideLoja.innerText=LOJA;let sideCaixa=safeGet("sideCaixa");if(sideCaixa)sideCaixa.innerText=CAIXA+" - "+(achouDetalhe?achouDetalhe.nome:"");let tipoBadge=safeGet("tipoUserBadge");if(tipoBadge){tipoBadge.innerText=TIPO_USER==="master"?"🔴 MASTER":"🔵 SIMPLES";tipoBadge.style.background=TIPO_USER==="master"?"#22c55e":"#60a5fa";}let sideUserTipo=safeGet("sideUserTipo");if(sideUserTipo)sideUserTipo.innerText=TIPO_USER==="master"?"🔴 MASTER - Pode tudo":"🔵 SIMPLES - Só vende";let sideEmp=safeGet("sideEmpNome");if(sideEmp)sideEmp.innerText=empresa.nome||"";let itemAdmin=safeGet("itemAdmin");if(itemAdmin && TIPO_USER==="master")itemAdmin.style.display="flex";renderProdutos();renderCadastroProdutos();atualizarSelectBalanca();renderClientes();renderFornecedores();renderEstoque();renderCaixaStatus();updateConn();escutarFirebase();renderRelatorios();renderCancelados();renderPreviaNota();atualizarProximoCodigo();renderSenhas();setTimeout(()=>{let tb=safeGet('tecladoBox');if(tb)tb.style.display='block';},300);}
+function logout(){if(confirm("Sair?")){let loginEl=safeGet("login");let appEl=safeGet("app");if(appEl)appEl.style.display="none";if(loginEl)loginEl.style.display="block";}}
+function toggleMenu(){let sm=safeGet("sideMenu");let ov=safeGet("overlay");if(sm)sm.classList.toggle("open");if(ov)ov.classList.toggle("open");}
+function ir(nome,el){document.querySelectorAll(".aba").forEach(a=>a.classList.add("hidden"));let aba=safeGet("aba-"+nome);if(aba)aba.classList.remove("hidden");document.querySelectorAll(".menu-item").forEach(m=>m.classList.remove("active"));if(el)el.classList.add("active");toggleMenu();if(nome==="caixa")renderCaixaStatus();if(nome==="empresa")renderPreviaNota();if(nome==="produtos")atualizarProximoCodigo();if(nome==="senhas")renderSenhas();if(nome==="pdv"){setTimeout(()=>{let tb=safeGet('tecladoBox');if(tb)tb.style.display='block';},200);}if(nome==="sync")renderFila();}
+function renderCaixaStatus(){let box=safeGet("caixaStatusBox"), badge=safeGet("caixaStatusBadge"), btnAbrir=safeGet("btnAbrirCaixa"), btnFechar=safeGet("btnFecharCaixa"), info=safeGet("caixaAbertoInfo"); if(caixaInfo.aberto){if(box){box.style.background="#dcfce7";box.innerHTML=`<b style="color:#166534">✅ ABERTO</b><br>${caixaInfo.aberturaHora||"-"}`;}if(badge){badge.innerText="ABERTO";badge.style.background="#16a34a";}if(info)info.innerText="✅ Aberto";if(btnAbrir)btnAbrir.style.display="none";if(btnFechar)btnFechar.style.display="block";}else{if(box){box.style.background="#fee2e2";box.innerHTML=`<b style="color:#b91c1c">🔒 FECHADO</b>`;}if(badge){badge.innerText="FECHADO";badge.style.background="#dc2626";}if(info)info.innerText="🔒 FECHADO";if(btnAbrir)btnAbrir.style.display="block";if(btnFechar)btnFechar.style.display="none";}renderResumoCaixa();}
+function abrirCaixa(){let inicialEl=safeGet("valorAbertura");let trocoEl=safeGet("trocoInicial");let inicial=inicialEl?parseFloat(inicialEl.value)||0:0, troco=trocoEl?parseFloat(trocoEl.value)||0:0; caixaInfo={aberto:true,inicial:inicial,troco:troco,aberturaHora:new Date().toLocaleString("pt-BR"),caixaId:CAIXA,lojaId:LOJA}; try{localStorage.setItem("taki_caixaInfo_"+CAIXA+"_"+LOJA,JSON.stringify(caixaInfo));localStorage.setItem("taki_caixaInfo",JSON.stringify(caixaInfo));}catch(e){} saveLocal(); alert("✅ Caixa aberto"); renderCaixaStatus();}
+function fecharCaixa(){if(TIPO_USER!=="master"){alert("❌ Só MASTER pode fechar caixa!");return}caixaInfo.aberto=false; try{localStorage.setItem("taki_caixaInfo_"+CAIXA+"_"+LOJA,JSON.stringify(caixaInfo));localStorage.setItem("taki_caixaInfo",JSON.stringify(caixaInfo));}catch(e){} saveLocal(); alert("🔒 Fechado"); renderCaixaStatus();}
+function renderResumoCaixa(){let hoje=vendasLocais.filter(v=>{try{return String(v.caixaId)===String(CAIXA)&& new Date(v.data).toDateString()===new Date().toDateString()}catch(e){return false}});let fat=hoje.reduce((s,v)=>s+(Number(v.total)||0),0); let resumo=safeGet("resumoCaixa");if(resumo)resumo.innerHTML=`<div class="row"><div class="card" style="margin:0;text-align:center;background:#dbeafe"><small>Vendas</small><h3>${hoje.length}</h3></div><div class="card" style="margin:0;text-align:center;background:#dcfce7"><small>Faturamento</small><h3>R$ ${fat.toFixed(2)}</h3></div></div>`; let hist=safeGet("historicoCaixa");if(hist)hist.innerHTML=hoje.slice(0,50).map(v=>`<div style="padding:8px 0;border-bottom:1px solid #eee;font-size:12px"><b>${v.hora||""}</b> - R$ ${Number(v.total||0).toFixed(2)} ${v.cpfNFP?` - 🧾 NFP: ${v.cpfNFP}`:""} <button onclick="reimprimirVenda('${v.idLocal}')" style="margin-left:6px;padding:4px 8px;border-radius:6px;background:#0f172a;color:#4ade80;border:none;font-size:10px">🧾 Nota</button></div>`).join("")||"Sem vendas";}
+function renderProdutos(){let buscaEl=safeGet("buscaProd");let busca=buscaEl?(buscaEl.value||"").toLowerCase():"";let div=safeGet("listaProdutos");if(!div)return;let lista=produtos.filter(p=>p.nome.toLowerCase().includes(busca)||String(p.codigo).includes(busca)); div.innerHTML=lista.map(p=>`<div class="prod"><div style="flex:1"><span class="prod-codigo">${p.codigo}</span><b>${p.nome}</b><br><b>R$ ${Number(p.preco).toFixed(2)}</b></div><button class="add" onclick="addCarrinho('${p.id}')">+</button></div>`).join("")||"<div style='padding:12px;text-align:center;color:#94a3b8'>Nenhum</div>";}
+function addCarrinho(id){if(!caixaInfo.aberto){alert("🔒 Caixa fechado!");return}let p=produtos.find(x=>String(x.id)===String(id)); if(!p)return; let ex=carrinho.find(x=>String(x.id)===String(p.id)); if(ex)ex.qtd++; else carrinho.push({id:String(p.id),codigo:String(p.codigo),nome:p.nome,preco:Number(p.preco),qtd:1}); renderCarrinho();}
+function renderCarrinho(){let div=safeGet("carrinho"), btn=safeGet("btnFinalizar"); if(!div||!btn)return; if(carrinho.length===0){div.innerHTML="<div style='text-align:center;color:#94a3b8;padding:10px'>Carrinho vazio</div>"; btn.disabled=true; let totEl=safeGet("total");if(totEl)totEl.innerText="0.00"; let numEl=safeGet("numVenda");if(numEl)numEl.innerText="0"; return} div.innerHTML=carrinho.map((it,idx)=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #e2e8f0"><div><span class="prod-codigo">${it.codigo}</span><b>${it.nome}</b><br><small>R$ ${it.preco.toFixed(2)} x ${it.qtd} = <b>R$ ${(it.preco*it.qtd).toFixed(2)}</b></small></div><div><button onclick="carrinho.splice(${idx},1);renderCarrinho()" style="background:#fee2e2;border:1px solid #fecaca;color:#b91c1c;border-radius:10px;padding:10px 14px;font-weight:800">🗑️</button></div></div>`).join(""); let tot=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0); let totalEl=safeGet("total");if(totalEl)totalEl.innerText=tot.toFixed(2); let numVendaEl=safeGet("numVenda");if(numVendaEl)numVendaEl.innerText=carrinho.reduce((s,i)=>s+i.qtd,0); btn.disabled=false;}
+function cancelarVendaTotal(){carrinho=[]; renderCarrinho(); let check=safeGet("checkNFP");if(check)check.checked=false; toggleNFP();}
+function finalizar(){if(!caixaInfo.aberto){alert("🔒 Caixa fechado!");return}if(carrinho.length===0){alert("Carrinho vazio!");return}let checkNFP=safeGet("checkNFP");let cpfNFPEl=safeGet("cpfNFP");let querNFP=checkNFP?checkNFP.checked:false;let cpfNFP=cpfNFPEl?cpfNFPEl.value.trim():"";if(querNFP &&!cpfNFP){alert("⚠️ Você marcou Nota Fiscal Paulista mas não digitou o CPF!");return}let total=carrinho.reduce((s,i)=>s+i.preco*i.qtd,0);let btn=safeGet("btnFinalizar"); if(btn){btn.disabled=true; btn.innerText="⏳ Salvando...";}let venda={caixaId:CAIXA,lojaId:LOJA,total:total,produtos:JSON.parse(JSON.stringify(carrinho)),pagamento:safeGet("pagamento")?safeGet("pagamento").value:"Dinheiro",cliente:safeGet("clienteVenda")?safeGet("clienteVenda").value||"Avulso":"Avulso",zap:safeGet("zapCliente")?safeGet("zapCliente").value||"":"",cpfNFP:querNFP?cpfNFP:"",querNFP:querNFP,data:new Date().toISOString(),hora:new Date().toLocaleTimeString("pt-BR"),idLocal:Date.now().toString(),empresa:JSON.parse(JSON.stringify(empresa))};ultimaVenda=venda; vendasLocais.unshift(venda); saveLocal(); if(btn){btn.disabled=false;btn.innerText="✓ FINALIZAR VENDA";} mostrarRecibo(venda); carrinho=[]; renderCarrinho(); renderRelatorios(); renderCaixaStatus(); tecla('C'); if(checkNFP)checkNFP.checked=false; toggleNFP(); if(cpfNFPEl)cpfNFPEl.value="";}
+function mostrarRecibo(venda){let el;el=safeGet("rEmpNome");if(el)el.innerText=venda.empresa?.nome||empresa.nome;el=safeGet("rEmpCnpj");if(el)el.innerText=(venda.empresa?.cnpj? "🪪 "+venda.empresa.cnpj : "");el=safeGet("rEmpEnd");if(el)el.innerText=venda.empresa?.end||"";el=safeGet("rEmpIE");if(el)el.innerText=venda.empresa?.ie? "IE: "+venda.empresa.ie : "";el=safeGet("rData");if(el)el.innerText=new Date(venda.data).toLocaleString("pt-BR");el=safeGet("rCaixa");if(el)el.innerText=venda.caixaId;el=safeGet("rCliente");if(el)el.innerText=venda.cliente||"Avulso";el=safeGet("rVendaId");if(el)el.innerText=venda.idLocal.slice(-6);el=safeGet("rTotal");if(el)el.innerText="R$ "+Number(venda.total).toFixed(2);el=safeGet("rPag");if(el)el.innerText=venda.pagamento;el=safeGet("rMsg");if(el)el.innerText=venda.empresa?.msg||empresa.msg||"Obrigado!";el=safeGet("rHora");if(el)el.innerText=venda.hora;let itensEl=safeGet("rItens");if(itensEl)itensEl.innerHTML=venda.produtos.map(p=>`<div class="linha"><span>${p.codigo} - ${p.nome} (${p.qtd}x)</span><span>R$ ${(p.preco*p.qtd).toFixed(2)}</span></div>`).join("");let nfpBox=safeGet("rNFPBox");let rCPF=safeGet("rCPF");let rMsgNFP=safeGet("rMsgNFP");if(venda.cpfNFP && venda.querNFP){if(nfpBox)nfpBox.style.display="block";if(rCPF)rCPF.innerText=venda.cpfNFP;if(rMsgNFP){rMsgNFP.style.display="block";rMsgNFP.innerText=venda.empresa?.msgNFP||empresa.msgNFP||"CPF incluído na Nota Fiscal Paulista.";}}else{if(nfpBox)nfpBox.style.display="none";if(rMsgNFP)rMsgNFP.style.display="none";}let socialHtml="";if(venda.empresa?.insta) socialHtml+=`📸 ${venda.empresa.insta}<br>`;if(venda.empresa?.zap) socialHtml+=`📲 Zap: ${venda.empresa.zap}<br>`;let rSocial=safeGet("rSocial");if(rSocial)rSocial.innerHTML=socialHtml||"";let modal=safeGet("modalRecibo");if(modal)modal.classList.add("open");}
+function fecharRecibo(){let m=safeGet("modalRecibo");if(m)m.classList.remove("open");}
+function reimprimirVenda(idLocal){let venda=vendasLocais.find(v=>v.idLocal===idLocal); if(venda) mostrarRecibo(venda);}
+function imprimirRecibo(){window.print();}
+function salvarPDF(){window.print();}
+function gerarTextoZap(venda){let texto=`*${venda.empresa?.nome||empresa.nome}*\n`;if(venda.empresa?.cnpj) texto+=`🪪 ${venda.empresa.cnpj}\n`;if(venda.cpfNFP) texto+=`🧾 CPF NFP: ${venda.cpfNFP}\n`;texto+=`--------------------------\nData: ${new Date(venda.data).toLocaleString("pt-BR")}\nCaixa: ${venda.caixaId}\nCliente: ${venda.cliente}\n--------------------------\n`;venda.produtos.forEach(p=>{texto+=`${p.codigo} - ${p.nome} ${p.qtd}x R$ ${Number(p.preco).toFixed(2)} = R$ ${(p.preco*p.qtd).toFixed(2)}\n`;});texto+=`--------------------------\n*TOTAL: R$ ${Number(venda.total).toFixed(2)}*\n${venda.pagamento}\n--------------------------\n${venda.empresa?.msg||empresa.msg}\n`;if(venda.cpfNFP) texto+=`\n${venda.empresa?.msgNFP||''}\n`;return texto;}
+function enviarZap(){if(!ultimaVenda){alert("Sem venda!");return}let texto=gerarTextoZap(ultimaVenda);let zapNumero=safeGet("zapCliente")?safeGet("zapCliente").value.replace(/\D/g,""):""; if(!zapNumero){zapNumero=prompt("Zap cliente com DDD:"); if(!zapNumero) return;} if(zapNumero.length<=11) zapNumero="55"+zapNumero; let url=`https://wa.me/${zapNumero}?text=${encodeURIComponent(texto)}`; window.open(url,"_blank");}
+function enviarZapLoja(){if(!ultimaVenda){alert("Sem venda!");return}let texto=gerarTextoZap(ultimaVenda); let telLoja=(empresa.zap||"").replace(/\D/g,""); if(telLoja.length<=11 && telLoja.length>=10) telLoja="55"+telLoja; let url=`https://wa.me/${telLoja||""}?text=${encodeURIComponent(texto)}`; if(!telLoja){url=`https://wa.me/?text=${encodeURIComponent(texto)}`;} window.open(url,"_blank");}
+function salvarProduto(){let codigoEl=safeGet("pCodigo");let nomeEl=safeGet("pNome");let precoEl=safeGet("pPreco");let estEl=safeGet("pEstoque");let codigoInput=codigoEl?codigoEl.value.trim():"";let nome=nomeEl?nomeEl.value.trim():"";let preco=precoEl?parseFloat(precoEl.value)||0:0;let estoque=estEl?parseInt(estEl.value)||0:0;if(!nome||preco<=0){alert("Nome e preço obrigatórios!");return;}if(!codigoInput||codigoInput===""){codigoInput=getProximoCodigo().toString();}let prod={id:codigoInput,codigo:codigoInput,nome,preco,estoque,porPeso:false};produtos=produtos.filter(p=>String(p.codigo)!==String(codigoInput));produtos.unshift(prod);produtos.sort((a,b)=>parseInt(a.codigo)-parseInt(b.codigo));saveLocal();let msg=safeGet("msgProduto");if(msg){msg.style.display="block";msg.style.background="#dcfce7";msg.style.color="#166534";msg.innerHTML=`✅ <b>${prod.nome}</b> código <b>${prod.codigo}</b> salvo! Próximo: <b>${getProximoCodigo()}</b>`;}if(nomeEl)nomeEl.value="";if(precoEl)precoEl.value="";if(estEl)estEl.value="100";atualizarProximoCodigo();renderProdutos();renderCadastroProdutos();renderEstoque();if(nomeEl)nomeEl.focus();if(msg)setTimeout(()=>{msg.style.display="none";},4000);}
+function renderCadastroProdutos(){let el=safeGet("listaCadastroProdutos");if(!el)return;el.innerHTML=produtos.map(p=>`<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid #eee;align-items:center"><div><span class="prod-codigo">${p.codigo}</span><b>${p.nome}</b><br><small>R$ ${Number(p.preco).toFixed(2)} | Est: ${p.estoque}</small></div><div style="display:flex;gap:6px"><button onclick="editarProd('${p.id}')" style="background:#dbeafe;border:none;border-radius:8px;padding:6px 10px">✏️</button><button onclick="delProd('${p.id}')" style="background:#fee2e2;border:none;border-radius:8px;padding:6px 10px">🗑️</button></div></div>`).join("")||"<small>Nenhum</small>";}
+function editarProd(id){let p=produtos.find(x=>String(x.id)===String(id));if(!p) return;let c1=safeGet("pCodigo");if(c1)c1.value=p.codigo;let c2=safeGet("pNome");if(c2)c2.value=p.nome;let c3=safeGet("pPreco");if(c3)c3.value=p.preco;let c4=safeGet("pEstoque");if(c4)c4.value=p.estoque;let c5=safeGet("pNome");if(c5)c5.focus();}
+function delProd(id){if(!confirm("Apagar produto?"))return; produtos=produtos.filter(p=>String(p.id)!==String(id)); saveLocal(); renderProdutos(); renderCadastroProdutos(); renderEstoque(); atualizarProximoCodigo();}
+function renderEstoque(){let t1=safeGet("estTotal");if(t1)t1.innerText=produtos.reduce((s,p)=>s+(Number(p.estoque)||0),0);let t2=safeGet("estBaixo");if(t2)t2.innerText=produtos.filter(p=>(Number(p.estoque)||0)<=5).length;let div=safeGet("listaEstoque");if(div)div.innerHTML=produtos.map(p=>`<div class="prod"><div><span class="prod-codigo">${p.codigo||p.id}</span><b>${p.nome}</b><br><small>Est: ${p.estoque}</small></div><b style="color:${Number(p.estoque)<=5?"#dc2626":"#16a34a"}">${p.estoque}</b></div>`).join("");}
+function salvarCliente(){let nomeEl=safeGet("cNome");let nome=nomeEl?nomeEl.value.trim():"";if(!nome)return;let telEl=safeGet("cTel");let cpfEl=safeGet("cCpf");let c={id:Date.now().toString(),nome,tel:telEl?telEl.value||"":"",cpf:cpfEl?cpfEl.value||"":""};clientes.push(c);saveLocal();renderClientes();if(nomeEl)nomeEl.value="";if(telEl)telEl.value="";if(cpfEl)cpfEl.value="";}
+function renderClientes(){let div=safeGet("listaClientes");if(div)div.innerHTML=clientes.slice(1).map(c=>`<div style="padding:10px 0;border-bottom:1px solid #eee"><b>${c.nome}</b> ${c.cpf?`<small style="background:#fef3c7;padding:2px 6px;border-radius:6px">🧾 ${c.cpf}</small>`:""}<br><small>${c.tel||""}</small></div>`).join("")||"<small>Nenhum</small>";}
+function salvarFornecedor(){let nomeEl=safeGet("fNome");let nome=nomeEl?nomeEl.value.trim():"";if(!nome)return;let telEl=safeGet("fTel");let f={id:Date.now().toString(),nome,tel:telEl?telEl.value||"":""};fornecedores.push(f);saveLocal();renderFornecedores();if(nomeEl)nomeEl.value="";}
+function renderFornecedores(){let div=safeGet("listaFornecedores");if(div)div.innerHTML=fornecedores.map(f=>`<div style="padding:10px 0;border-bottom:1px solid #eee"><b>${f.nome}</b><br><small>${f.tel||""}</small></div>`).join("")||"<small>Nenhum</small>";}
+function setPeso(v){pesoAtual=Number(v)||0;let d1=safeGet("pesoDisplay");if(d1)d1.innerText=pesoAtual.toFixed(3);let d2=safeGet("pesoManual");if(d2)d2.value=pesoAtual;calcBalanca();}
+function calcBalanca(){let sel=safeGet("produtoBalanca");if(!sel||!sel.value)return;let prod=produtos.find(p=>String(p.id)===String(sel.value));if(!prod)return;let tot=safeGet("totalBalanca");if(tot)tot.innerText=(pesoAtual*prod.preco).toFixed(2);}
+function addBalanca(){let sel=safeGet("produtoBalanca");if(!sel)return;let prod=produtos.find(p=>String(p.id)===String(sel.value));if(!prod||pesoAtual<=0)return;carrinho.push({id:prod.id,codigo:prod.codigo||prod.id,nome:prod.nome+" ("+pesoAtual.toFixed(3)+"kg)",preco:prod.preco*pesoAtual,qtd:1});renderCarrinho();ir('pdv',document.querySelectorAll('.menu-item')[0]);setPeso(0);}
+function atualizarSelectBalanca(){let sel=safeGet("produtoBalanca");if(!sel)return;let lista=produtos.filter(p=>p.porPeso);if(lista.length===0)lista=produtos;sel.innerHTML=lista.map(p=>`<option value="${p.id}">${p.codigo||p.id} - ${p.nome} - R$ ${Number(p.preco).toFixed(2)}</option>`).join("");}
+function renderFila(){let div=safeGet("filaOffline"), badge=safeGet("filaBadge");if(!div) return; if(filaOffline.length===0){div.innerHTML="<div style='padding:20px;text-align:center;color:#94a3b8'>✅ Tudo sincronizado!</div>";if(badge)badge.style.display="none";}else{if(badge){badge.style.display="inline-block";badge.innerText=filaOffline.length}div.innerHTML=filaOffline.map(v=>`<div style="padding:10px;background:#fffbeb;margin:6px 0;border-radius:10px;border-left:4px solid #f59e0b"><b>${v.caixaId}</b> - R$ ${Number(v.total).toFixed(2)} às ${v.hora} ${v.cpfNFP?` - 🧾 ${v.cpfNFP}`:""}</div>`).join("");}}
+function forcarSync(){if(!isOnline){alert("Sem internet!");return}if(filaOffline.length===0){alert("Tudo sincronizado ✅");return}if(!db){filaOffline=[];saveLocal();renderFila();alert("✅ Limpo local (sem Firebase)");return}Promise.all(filaOffline.map(v=>db.ref(`lojas/${LOJA}/vendas`).push(v))).then(()=>{filaOffline=[];saveLocal();renderFila();alert("✅ Sincronizado!");});}
+function renderCancelados(){let div=safeGet("listaCancelados");if(!div) return; if(cancelados.length===0){div.innerHTML="<div style='padding:20px;text-align:center;color:#94a3b8'>✅ Nenhum cancelamento</div>";return}div.innerHTML=cancelados.map(c=>`<div style="padding:10px;background:#fff1f2;margin:6px 0;border-radius:10px;border-left:4px solid #dc2626"><b style="color:#b91c1c">${c.tipo||"ITEM"} - ${c.produto}</b><br><small>R$ ${Number(c.valor||0).toFixed(2)} | ${c.motivo}</small></div>`).join("");}
+function renderRelatorios(){let hoje=vendasLocais.filter(v=>{try{return new Date(v.data).toDateString()===new Date().toDateString()}catch(e){return false}});let fat=hoje.reduce((s,v)=>s+(Number(v.total)||0),0);let comNFP=hoje.filter(v=>v.cpfNFP).length;let semNFP=hoje.length-comNFP;let el1=safeGet("fatTop");if(el1)el1.innerText=fat.toFixed(2);let el2=safeGet("relFat");if(el2)el2.innerText="R$ "+fat.toFixed(2);let el3=safeGet("relQtd");if(el3)el3.innerText=hoje.length+" vendas";let el4=safeGet("relNFP");if(el4)el4.innerText=comNFP;let el5=safeGet("relSemNFP");if(el5)el5.innerText=semNFP;let el6=safeGet("adminFatTotal");if(el6)el6.innerText="R$ "+fat.toFixed(2);}
+function escutarFirebase(){if(!db)return;try{db.ref(`lojas/${LOJA}/produtos`).on("value",snap=>{if(!snap.exists())return;let lista=[];snap.forEach(c=>lista.push(c.val()));if(lista.length>0){produtos=lista;saveLocal();renderProdutos();renderCadastroProdutos();renderEstoque();atualizarSelectBalanca();}});db.ref(`lojas/${LOJA}/empresa`).on("value",snap=>{if(snap.exists()){empresa=snap.val();saveLocal();renderPreviaNota();}});}catch(e){}}
+function salvarNovaSenha(){let caixaEl=safeGet("senhaCaixaSelect");let tipoEl=safeGet("senhaTipoSelect");let nomeEl=safeGet("senhaNomePessoa");let senhaEl=safeGet("senhaNova");let caixa=caixaEl?caixaEl.value:"CAIXA_01";let tipo=tipoEl?tipoEl.value:"simples";let nomePessoa=nomeEl?nomeEl.value.trim():"";let senhaNova=senhaEl?senhaEl.value.trim():"";if(!nomePessoa||!senhaNova){alert("⚠️ Preencha nome e senha!");return;}let id=Date.now().toString();let nova={id:id,caixa:caixa,tipo:tipo,nome:nomePessoa,senha:senhaNova};SENHAS_DETALHES.push(nova);if(!SENHAS[caixa]) SENHAS[caixa]=[];if(!SENHAS[caixa].includes(senhaNova)) SENHAS[caixa].push(senhaNova);saveLocal();let msg=safeGet("msgSenha");if(msg){msg.style.display="block";msg.style.background="#dcfce7";msg.style.color="#166534";msg.innerHTML=`✅ Senha <b>${senhaNova}</b> cadastrada!<br><b>${caixa}</b> - ${tipo.toUpperCase()} - ${nomePessoa}`;}if(nomeEl)nomeEl.value="";if(senhaEl)senhaEl.value="";renderSenhas();if(msg)setTimeout(()=>{msg.style.display="none";},4000);}
+function renderSenhas(){let div=safeGet("listaSenhas");let totalSimples=safeGet("totalSimples");let totalMaster=safeGet("totalMaster");if(!div) return;let simples=SENHAS_DETALHES.filter(s=>s.tipo==="simples").length;let master=SENHAS_DETALHES.filter(s=>s.tipo==="master").length;if(totalSimples) totalSimples.innerText=simples;if(totalMaster) totalMaster.innerText=master;if(SENHAS_DETALHES.length===0){div.innerHTML="<small style='color:#94a3b8'>Nenhuma senha cadastrada ainda.</small>";return}div.innerHTML=SENHAS_DETALHES.map(s=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #e2e8f0"><div style="flex:1"><div style="display:flex;gap:6px;align-items:center"><b style="background:#0f172a;color:#fff;padding:3px 8px;border-radius:6px;font-size:11px">${s.caixa}</b><span class="tipo-badge ${s.tipo==="master"?"tipo-master":"tipo-simples"}">${s.tipo==="master"?"🔴 MASTER":"🔵 SIMPLES"}</span></div><div style="margin-top:4px"><b>${s.nome}</b><br><small style="font-family:monospace;background:#f1f5f9;padding:2px 8px;border-radius:6px;border:1px solid #cbd5e1">🔑 ${s.senha}</small></div></div><div style="display:flex;gap:6px"><button onclick="editarSenha('${s.id}')" style="background:#dbeafe;border:none;border-radius:8px;padding:8px 12px">✏️</button><button onclick="deletarSenha('${s.id}')" style="background:#fee2e2;border:none;border-radius:8px;padding:8px 12px;color:#b91c1c">🗑️</button></div></div>`).join("");}
+function editarSenha(id){let s=SENHAS_DETALHES.find(x=>x.id===id);if(!s) return;let c1=safeGet("senhaCaixaSelect");if(c1)c1.value=s.caixa;let c2=safeGet("senhaTipoSelect");if(c2)c2.value=s.tipo;let c3=safeGet("senhaNomePessoa");if(c3)c3.value=s.nome;let c4=safeGet("senhaNova");if(c4)c4.value=s.senha;deletarSenha(id,false);}
+function deletarSenha(id,confirmar=true){if(confirmar){if(!confirm("Apagar essa senha?"))return;}let s=SENHAS_DETALHES.find(x=>x.id===id);SENHAS_DETALHES=SENHAS_DETALHES.filter(x=>x.id!==id);if(s){if(SENHAS[s.caixa]){SENHAS[s.caixa]=SENHAS[s.caixa].filter(p=>p!==s.senha);}}saveLocal();renderSenhas();}
+</script>
 </body>
 </html>
